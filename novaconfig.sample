@@ -1,0 +1,10 @@
+
+export OS_USERNAME='m0lt3n'
+export OS_PASSWORD='<AUTH_TOKEN_CHANGEME>'
+export OS_TENANT_NAME='724740'
+export OS_AUTH_URL='https://identity.api.rackspacecloud.com/v2.0/'
+export NOVA_AUTH_SYSTEM='rackspace'
+export OS_REGION_NAME='IAD'
+export FLAVOR='8 GB Performance'
+export IMAGE='Ubuntu 14.04 LTS (Trusty Tahr) (PVHVM)'
+
