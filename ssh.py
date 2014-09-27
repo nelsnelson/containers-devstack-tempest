@@ -41,13 +41,16 @@ def get_gateway(host, config=None):
     proxy_command = conf.get('proxycommand', None) if conf else None
     return paramiko.ProxyCommand(proxy_command) if proxy_command else None
 
-def initialize_client(host, port, password, user='root', config=None, key_file=None):
+def initialize_client(host, port, password, user='root', config=None, keyfile=None):
     try:
-        log.info('Connecting to {}@{}:{} with password {}'.format(user, host, port, password))
+        if keyfile:
+            log.info('Connecting to {}@{}:{} with keyfile {}'.format(user, host, port, keyfile))
+        elif password:
+            log.info('Connecting to {}@{}:{} with password {}'.format(user, host, port, password))
         c = paramiko.SSHClient()
         c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        if key_file:
-            c.connect(host, port=port, username=user, key_filename=key_file, sock=get_gateway(host, config=config))
+        if keyfile:
+            c.connect(host, port=port, username=user, key_filename=keyfile, sock=get_gateway(host, config=config))
         else:
             c.connect(host, port=port, username=user, password=password, sock=get_gateway(host, config=config))
     except socket.error as e:
@@ -55,17 +58,17 @@ def initialize_client(host, port, password, user='root', config=None, key_file=N
         sys.exit(1)
     return c
 
-def connect(host, port, password, user='root', config=None, key_file=None):
+def connect(host, port, password, user='root', config=None, keyfile=None):
     key = '_client_{}'.format(host)
     if not key in session:
-        session[key] = initialize_client(host, port, password, user=user, config=config, key_file=key_file)
+        session[key] = initialize_client(host, port, password, user=user, config=config, keyfile=keyfile)
     return session[key]
 
-def remote_exec(address, user='root', password=None, command=None, config=None, key_file=None, port=22, quiet=False):
-    if not (password and command):
+def remote_exec(address, user='root', password=None, command=None, config=None, keyfile=None, port=22, quiet=False):
+    if not ((password or keyfile) and command):
         return
     try:
-        ssh = connect(address, port, password, user=user, config=config, key_file=key_file)
+        ssh = connect(address, port, password, user=user, config=config, keyfile=keyfile)
         if not quiet:
             log.info('Remote command to {}: {}'.format(address, command))
         stdin, stdout, stderr = ssh.exec_command(command)

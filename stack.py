@@ -3,7 +3,7 @@
 import logging
 import argparse
 import commands
-import random
+import os
 import re
 import sys
 import time
@@ -23,49 +23,58 @@ log = logs.logger('Stack')
 meta = dict()
 image = None
 flavor = None
+private_key = './id_rsa'
 public_key = './id_rsa.pub'
+name_prefix = 'devstack-tempest'
 
-def stack():
+def stack_vm():
+    #fetch_public_key_file()
+    #keypairs = client.nova.keypairs.list()
+    #if find(lambda keypair: keypair.id == 'root', keypairs):
+    #    keypairs.delete('root')
+    #keypairs.create('root', key)
+    fetch_image()
+    fetch_flavor()
     server = None
-    name = 'devstack-tempest-{}'.format(time.time())
+    name = '{}-{}'.format(name_prefix, time.time())
     try:
-        files = { '/root/.ssh/authorized_keys': public_key_file()}
+        files = {
+            '/root/.ssh/authorized_keys': public_key_file(),
+            '/tmp/upgrade.sh': content('./upgrade.sh'),
+            '/tmp/jenkins-user.sh': content('./jenkins-user.sh'),
+            '/tmp/git-install.sh': content('./git-install.sh')
+        }
         server = create(name, files=files)
         time.sleep(4)
         ping(server)
         log.info('Created server {}'.format(server.name))
+        return server
+    except KeyboardInterrupt as ex:
+        print 'Interrupted'
+        sys.exit(0)
 
 # Upgrade the server, install git and pip packages, add tox via pip 
 # (because the packaged version is too old), set up a "jenkins" account 
 # (add user "jenkins" to sudoers) and reboot to make sure you're 
 # running a current kernel:
-        remote(server, """export DEBIAN_FRONTEND=noninteractive \\
-&& echo "debconf debconf/frontend select Noninteractive" | debconf-set-selections \\
-&& apt-get upgrade -o Dpkg::Options::="--force-confnew" --assume-yes --fix-missing \\
-&& apt-get install --assume-yes --fix-missing git \\
-&& adduser --quiet --disabled-password --gecos '' jenkins \\
-&& mkdir -p /etc/sudoers.d \\
-&& echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/admin \\
-&& mkdir -p $HOME/src && pushd $HOME/src \\
-&& git clone https://review.openstack.org/p/openstack-infra/config \\
-&& config/install_puppet.sh && config/install_modules.sh \\
-&& puppet apply --modulepath=/root/config/modules:/etc/puppet/modules \\
--e "class { openstack_project::single_use_slave: install_users => false,
-ssh_key => \"$( cat $HOME/.ssh/id_rsa.pub | awk '{print $2}' )\" }" \\
-&& reboot"""
+def config_stack_vm(server):
+    remote(server, command='chmod +x /tmp/*.sh')
+    remote(server, command='/tmp/upgrade.sh')
+    remote(server, command='/tmp/jenkins-user.sh')
+    remote(server, command='/tmp/git-install.sh')
+    remote(server, command='reboot')
 
-    except KeyboardInterrupt as ex:
-        print 'Interrupted'
-        sys.exit(0)
+def find(f, seq):
+    for item in seq:
+        if f(item): 
+            return item
 
 def setup():
-    fetch_image()
-    fetch_flavor()
-    #fetch_public_key_file()
-    #for keypair in client.nova.keypairs.list():
-    #    if keypair.id == 'debian':
-    #        keypairs.delete('debian')
-    #keypairs.create('debian', key)
+    servers = client.nova.servers.list()
+    server = find(lambda server: re.compile('^{}-.*'.format(name_prefix)).match(server.name), servers)
+    if not server:
+        server = stack_vm()
+    config_stack_vm(server)
 
 def fetch_flavor():
     global flavor
@@ -91,12 +100,12 @@ def create(name, key_name=None, files=dict(), clock=True):
         log.info('Server has started with IP address {}'.format(server.accessIPv4 or server.addresses['private'][0]['addr']))
     return server
  
-def remote(server, command=config.command, clock=True):
+def remote(server, user='root', command=config.command, clock=True):
     if not server:
         return
     name = server.name
     target = server.accessIPv4
-    result = ssh.remote_exec(server, password=server.adminPass, command=command, timeout=config.timeout)
+    result = ssh.remote_exec(target, user=user, keyfile=private_key, command=command)
     if result:
         log.info(result)
     return result
@@ -125,18 +134,18 @@ def ping(server, clock=True):
         sys.exit(0)
 
 def public_key_file():
-    commands.getoutput("ssh-keygen -t rsa -P '' -N '' -f ./id_rsa")
+    if not os.path.isfile(private_key):
+        commands.getoutput("ssh-keygen -t rsa -P '' -N '' -f {}".format(private_key))
     return content(public_key)
  
 def content(p):
     with open(p, 'r') as f:
-        content = f.read()
-    return content
+        s = f.read()
+    return s
 
 def main():
     try:
         setup()
-        stack()
     except KeyboardInterrupt as ex:
         print "\nInterrupted"
 
