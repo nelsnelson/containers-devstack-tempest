@@ -74,7 +74,7 @@ def config_stack_vm(server):
     remote(server, command='/root/scripts/upgrade.sh')
     remote(server, command='/root/scripts/jenkins-user.sh')
     remote(server, command='/root/scripts/openstack-infra-install.sh')
-    #remote(server, command='reboot')
+    remote(server, command='reboot')
 
 def find(f, seq):
     for item in seq:
