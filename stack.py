@@ -40,9 +40,9 @@ def stack_vm():
     try:
         files = {
             '/root/.ssh/authorized_keys': public_key_file(),
-            '/tmp/upgrade.sh': content('./upgrade.sh'),
-            '/tmp/jenkins-user.sh': content('./jenkins-user.sh'),
-            '/tmp/git-install.sh': content('./git-install.sh')
+            '/tmp/upgrade.sh': content('scripts/upgrade.sh'),
+            '/tmp/jenkins-user.sh': content('scripts/jenkins-user.sh'),
+            '/tmp/openstack-infra-install.sh': content('scripts/openstack-infra-install.sh')
         }
         server = create(name, files=files)
         time.sleep(4)
@@ -61,7 +61,7 @@ def config_stack_vm(server):
     remote(server, command='chmod +x /tmp/*.sh')
     remote(server, command='/tmp/upgrade.sh')
     remote(server, command='/tmp/jenkins-user.sh')
-    remote(server, command='/tmp/git-install.sh')
+    remote(server, command='/tmp/openstack-infra-install.sh')
     remote(server, command='reboot')
 
 def find(f, seq):
@@ -141,7 +141,6 @@ def public_key_file():
 def content(path):
     with open(path, 'r') as f:
         s = f.read()
-    log.info("Content for {}: {}".format(path, s))
     return s
 
 def main():
