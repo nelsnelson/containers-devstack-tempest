@@ -95,6 +95,7 @@ def reset():
     server = find_server('^{}-.*'.format(name_prefix))
     if server:
         delete.delete(server.id)
+        wait.until_gone(server)
 
 def fetch_flavor():
     global flavor
