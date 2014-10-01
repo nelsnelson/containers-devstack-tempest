@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
-mkdir -p $HOME/src
-pushd $HOME/src
+mkdir -p /home/jenkins/src
+pushd /home/jenkins/src
 git clone https://review.openstack.org/p/openstack-infra/config
 config/install_puppet.sh && config/install_modules.sh
 puppet apply --modulepath=/root/config/modules:/etc/puppet/modules -e \

@@ -20,6 +20,18 @@ logging.getLogger(__name__).addHandler(logging.StreamHandler())
 
 log = logs.logger('Stack')
 
+args_parser = argparse.ArgumentParser(
+    prog='stack.py',
+    description='Containers tempest devstack vm setup',
+    formatter_class=argparse.RawTextHelpFormatter)
+args_parser.add_argument(
+    '-r', '--reset',
+    action='store_true',
+    dest='reset',
+    default=False,
+    required=False,
+    help='delete existing vm and start from scratch')
+
 meta = dict()
 image = None
 flavor = None
@@ -40,9 +52,9 @@ def stack_vm():
     try:
         files = {
             '/root/.ssh/authorized_keys': public_key_file(),
-            '/root/upgrade.sh': content('scripts/upgrade.sh'),
-            '/root/jenkins-user.sh': content('scripts/jenkins-user.sh'),
-            '/root/openstack-infra-install.sh': content('scripts/openstack-infra-install.sh')
+            '/root/scripts/upgrade.sh': content('scripts/upgrade.sh'),
+            '/root/scripts/jenkins-user.sh': content('scripts/jenkins-user.sh'),
+            '/root/scripts/openstack-infra-install.sh': content('scripts/openstack-infra-install.sh')
         }
         server = create(name, files=files)
         time.sleep(4)
@@ -58,10 +70,10 @@ def stack_vm():
 # (add user "jenkins" to sudoers) and reboot to make sure you're 
 # running a current kernel:
 def config_stack_vm(server):
-    remote(server, command='chmod +x /tmp/*.sh')
-    remote(server, command='/root/upgrade.sh')
-    remote(server, command='/root/jenkins-user.sh')
-    remote(server, command='/root/openstack-infra-install.sh')
+    remote(server, command='chmod +x /root/scripts/*.sh')
+    remote(server, command='/root/scripts/upgrade.sh')
+    remote(server, command='/root/scripts/jenkins-user.sh')
+    remote(server, command='/root/scripts/openstack-infra-install.sh')
     #remote(server, command='reboot')
 
 def find(f, seq):
@@ -69,12 +81,20 @@ def find(f, seq):
         if f(item): 
             return item
 
-def setup():
+def find_server(pattern):
     servers = client.nova.servers.list()
-    server = find(lambda server: re.compile('^{}-.*'.format(name_prefix)).match(server.name), servers)
+    return find(lambda server: re.compile(pattern).match(server.name), servers)
+
+def setup():
+    server = find_server('^{}-.*'.format(name_prefix))
     if not server:
         server = stack_vm()
     config_stack_vm(server)
+
+def reset():
+    server = find_server('^{}-.*'.format(name_prefix))
+    if server:
+        delete.delete(server.id)
 
 def fetch_flavor():
     global flavor
@@ -144,7 +164,10 @@ def content(path):
     return s
 
 def main():
+    args = args_parser.parse_args()
     try:
+        if args.reset:
+            reset()
         setup()
     except KeyboardInterrupt as ex:
         print "\nInterrupted"
