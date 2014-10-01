@@ -39,10 +39,10 @@ def stack_vm():
     name = '{}-{}'.format(name_prefix, time.time())
     try:
         files = {
-            '$HOME/.ssh/authorized_keys': public_key_file(),
-            '$HOME/upgrade.sh': content('scripts/upgrade.sh'),
-            '$HOME/jenkins-user.sh': content('scripts/jenkins-user.sh'),
-            '$HOME/openstack-infra-install.sh': content('scripts/openstack-infra-install.sh')
+            '/root/.ssh/authorized_keys': public_key_file(),
+            '/root/upgrade.sh': content('scripts/upgrade.sh'),
+            '/root/jenkins-user.sh': content('scripts/jenkins-user.sh'),
+            '/root/openstack-infra-install.sh': content('scripts/openstack-infra-install.sh')
         }
         server = create(name, files=files)
         time.sleep(4)
@@ -59,9 +59,9 @@ def stack_vm():
 # running a current kernel:
 def config_stack_vm(server):
     remote(server, command='chmod +x /tmp/*.sh')
-    remote(server, command='$HOME/upgrade.sh')
-    remote(server, command='$HOME/jenkins-user.sh')
-    remote(server, command='$HOME/openstack-infra-install.sh')
+    remote(server, command='/root/upgrade.sh')
+    remote(server, command='/root/jenkins-user.sh')
+    remote(server, command='/root/openstack-infra-install.sh')
     #remote(server, command='reboot')
 
 def find(f, seq):
