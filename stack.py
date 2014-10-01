@@ -138,9 +138,10 @@ def public_key_file():
         commands.getoutput("ssh-keygen -t rsa -P '' -N '' -f {}".format(private_key))
     return content(public_key)
  
-def content(p):
-    with open(p, 'r') as f:
+def content(path):
+    with open(path, 'r') as f:
         s = f.read()
+    log.debug "Content for {}: {}".format(path, s)
     return s
 
 def main():
