@@ -141,7 +141,7 @@ def public_key_file():
 def content(path):
     with open(path, 'r') as f:
         s = f.read()
-    log.debug("Content for {}: {}".format(path, s))
+    log.info("Content for {}: {}".format(path, s))
     return s
 
 def main():
