@@ -71,10 +71,9 @@ def stack_vm():
 # running a current kernel:
 def config_stack_vm(server):
     remote(server, command='chmod +x /root/scripts/*.sh')
-    remote(server, command='/root/scripts/upgrade.sh')
-    remote(server, command='/root/scripts/jenkins-user.sh')
-    remote(server, command='/root/scripts/openstack-infra-install.sh')
-    remote(server, command='reboot')
+    remote(server, command='nohup /root/scripts/upgrade.sh 2>&1')
+    remote(server, command='nohup /root/scripts/jenkins-user.sh 2>&1')
+    remote(server, command='nohup /root/scripts/openstack-infra-install.sh 2>&1')
 
 def find(f, seq):
     for item in seq:
