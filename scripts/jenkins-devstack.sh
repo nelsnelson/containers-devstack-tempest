@@ -1,6 +1,9 @@
 #! /usr/bin/env bash
 
-source ./jenkins-devstack-env.sh
+PATH_OF_THIS_SCRIPT=`dirname "${0}"`
+SCRIPT_DIR=${PATH_OF_THIS_SCRIPT/".\/"/"$(pwd)\/"}
+
+source $SCRIPT_DIR/jenkins-devstack-env.sh
 
 mkdir -p $WORKSPACE
 git clone $REPO_URL/$ZUUL_PROJECT $ZUUL_URL/$ZUUL_PROJECT
