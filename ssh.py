@@ -59,7 +59,7 @@ def initialize_client(host, port, password, user='root', config=None, keyfile=No
     return c
 
 def connect(host, port, password, user='root', config=None, keyfile=None):
-    key = '_client_{}'.format(host)
+    key = '_client_{}@{}'.format(user, host)
     if not key in session:
         session[key] = initialize_client(host, port, password, user=user, config=config, keyfile=keyfile)
     return session[key]
