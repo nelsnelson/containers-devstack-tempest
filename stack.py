@@ -54,7 +54,7 @@ def stack_vm():
     try:
         files = {
             '/root/.ssh/authorized_keys': public_key_file(),
-            '/tmp/bootstrap.sh': content('scripts/bootstrap.sh')
+            '/root/bootstrap.sh': content('scripts/bootstrap.sh')
         }
         server = create(name, files=files)
         time.sleep(4)
@@ -70,8 +70,8 @@ def stack_vm():
 # (add user "jenkins" to sudoers) and reboot to make sure you're 
 # running a current kernel:
 def config_stack_vm(server):
-    remote(server, command='chmod +x /tmp/bootstrap.sh')
-    remote(server, command='nohup /tmp/bootstrap.sh 2>&1')
+    remote(server, command='chmod +x /root/bootstrap.sh')
+    remote(server, command='nohup /root/bootstrap.sh 2>&1')
 
 def jenkins_devstack(server):
     remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1')
