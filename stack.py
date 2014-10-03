@@ -52,12 +52,7 @@ def stack_vm():
     try:
         files = {
             '/root/.ssh/authorized_keys': public_key_file(),
-            '/root/scripts/upgrade.sh': content('scripts/upgrade.sh'),
-            '/root/scripts/jenkins-user.sh': content('scripts/jenkins-user.sh'),
-            '/root/scripts/openstack-infra-install.sh': content('scripts/openstack-infra-install.sh'),
-            '/home/jenkins/.ssh/authorized_keys': public_key_file(),
-            '/home/jenkins/scripts/jenkins-devstack-env.sh': content('scripts/jenkins-devstack-env.sh'),
-            '/home/jenkins/scripts/jenkins-devstack.sh': content('scripts/jenkins-devstack.sh')
+            '/tmp/bootstrap.sh': content('scripts/bootstrap.sh')
         }
         server = create(name, files=files)
         time.sleep(4)
@@ -73,10 +68,8 @@ def stack_vm():
 # (add user "jenkins" to sudoers) and reboot to make sure you're 
 # running a current kernel:
 def config_stack_vm(server):
-    remote(server, command='chmod +x /root/scripts/*.sh')
-    remote(server, command='nohup /root/scripts/upgrade.sh 2>&1')
-    remote(server, command='nohup /root/scripts/jenkins-user.sh 2>&1')
-    remote(server, command='nohup /root/scripts/openstack-infra-install.sh 2>&1')
+    remote(server, command='chmod +x /tmp/bootstrap.sh')
+    remote(server, command='nohup /tmp/bootstrap.sh 2>&1')
 
 def find(f, seq):
     for item in seq:
