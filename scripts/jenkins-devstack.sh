@@ -10,4 +10,5 @@ popd
 pushd $WORKSPACE
 git clone --depth 1 $REPO_URL/openstack-infra/devstack-gate
 popd
-
+cp $WORKSPACE/devstack-gate/devstack-vm-gate-wrap.sh $WORKSPACE/safe-devstack-vm-gate-wrap.sh
+$WORKSPACE/safe-devstack-vm-gate-wrap.sh

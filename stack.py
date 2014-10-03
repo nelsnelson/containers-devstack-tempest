@@ -40,11 +40,6 @@ public_key = './id_rsa.pub'
 name_prefix = 'devstack-tempest'
 
 def stack_vm():
-    #fetch_public_key_file()
-    #keypairs = client.nova.keypairs.list()
-    #if find(lambda keypair: keypair.id == 'root', keypairs):
-    #    keypairs.delete('root')
-    #keypairs.create('root', key)
     fetch_image()
     fetch_flavor()
     server = None
@@ -71,6 +66,9 @@ def config_stack_vm(server):
     remote(server, command='chmod +x /tmp/bootstrap.sh')
     remote(server, command='nohup /tmp/bootstrap.sh 2>&1')
 
+def jenkins_devstack(server):
+    remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1')
+
 def find(f, seq):
     for item in seq:
         if f(item): 
@@ -84,7 +82,7 @@ def setup():
     server = find_server('^{}-.*'.format(name_prefix))
     if not server:
         server = stack_vm()
-    config_stack_vm(server)
+    return server
 
 def reset():
     server = find_server('^{}-.*'.format(name_prefix))
@@ -166,7 +164,9 @@ def main():
     try:
         if args.reset:
             reset()
-        setup()
+        server = setup()
+        config_stack_vm(server)
+        jenkins_devstack(server)
     except KeyboardInterrupt as ex:
         print "\nInterrupted"
 
