@@ -1,3 +1,4 @@
 .config*
+.novaconfig*
 *.pyc
 id_rsa*
