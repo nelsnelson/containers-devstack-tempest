@@ -31,6 +31,13 @@ args_parser.add_argument(
     default=False,
     required=False,
     help='delete existing vm and start from scratch')
+args_parser.add_argument(
+    '-d', '--devstack-only',
+    action='store_true',
+    dest='devstack_only',
+    default=False,
+    required=False,
+    help='just run devstack on an existing vm')
 
 meta = dict()
 image = None
@@ -165,7 +172,8 @@ def main():
         if args.reset:
             reset()
         server = setup()
-        config_stack_vm(server)
+        if not args.devstack_only:
+            config_stack_vm(server)
         jenkins_devstack(server)
     except KeyboardInterrupt as ex:
         print "\nInterrupted"
