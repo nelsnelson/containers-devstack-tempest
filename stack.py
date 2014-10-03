@@ -54,7 +54,10 @@ def stack_vm():
             '/root/.ssh/authorized_keys': public_key_file(),
             '/root/scripts/upgrade.sh': content('scripts/upgrade.sh'),
             '/root/scripts/jenkins-user.sh': content('scripts/jenkins-user.sh'),
-            '/root/scripts/openstack-infra-install.sh': content('scripts/openstack-infra-install.sh')
+            '/root/scripts/openstack-infra-install.sh': content('scripts/openstack-infra-install.sh'),
+            '/home/jenkins/.ssh/authorized_keys': public_key_file(),
+            '/home/jenkins/scripts/jenkins-devstack-env.sh': content('scripts/jenkins-devstack-env.sh'),
+            '/home/jenkins/scripts/jenkins-devstack.sh': content('scripts/jenkins-devstack.sh')
         }
         server = create(name, files=files)
         time.sleep(4)
@@ -162,6 +165,8 @@ def content(path):
     with open(path, 'r') as f:
         s = f.read()
     return s
+
+# Based on https://github.com/openstack-infra/devstack-gate
 
 def main():
     args = args_parser.parse_args()
