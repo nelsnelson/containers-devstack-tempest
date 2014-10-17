@@ -174,6 +174,7 @@ def main():
         server = setup()
         if not args.devstack_only:
             config_stack_vm(server)
+        wait.until_up(server, timeout=180)
         jenkins_devstack(server)
     except KeyboardInterrupt as ex:
         print "\nInterrupted"
