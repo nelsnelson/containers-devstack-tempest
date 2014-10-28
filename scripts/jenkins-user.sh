@@ -2,6 +2,7 @@
 
 adduser --quiet --disabled-password --gecos '' jenkins
 mkdir -p /etc/sudoers.d
+chmod -R 440 /etc/sudoers.d
 echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/admin
 chmod 440 /etc/sudoers.d/admin
 mkdir -p /home/jenkins/.ssh
