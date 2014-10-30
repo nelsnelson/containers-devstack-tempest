@@ -16,7 +16,6 @@ popd
 cp $WORKSPACE/devstack-gate/devstack-vm-gate-wrap.sh $WORKSPACE/safe-devstack-vm-gate-wrap.sh
 export DEBIAN_FRONTEND=noninteractive
 echo "debconf debconf/frontend select Noninteractive" | debconf-set-selections
-#export REMAINING_TIME=10000
 export NTP_SERVER=pool.ntp.org
-#$WORKSPACE/safe-devstack-vm-gate-wrap.sh
+$WORKSPACE/safe-devstack-vm-gate-wrap.sh > $HOME/devstack-gate-log.txt
 
