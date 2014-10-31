@@ -1,0 +1,3 @@
+paramiko>=1.14.0
+python-novaclient>=2.17.0
+rackspace-auth-openstack>=1.3
