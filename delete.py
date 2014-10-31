@@ -30,14 +30,14 @@ def stop(server):
         server.stop()
     except novaclient.exceptions.Conflict as ex:
         log.error('Failed to delete server {}: {}'.format(server.id, ex.message))
-    except novaclient.openstack.common.apiclient.exceptions.BadRequest as ex:
+    except novaclient.exceptions.BadRequest as ex:
+        log.error(ex.message)
         if 'Cannot stop while the instance is in this state.' in ex.message:
-            log.error(ex.message)
             reset(server)
             try:
                 log.info('Second attempt to stop server {}'.format(server.id))
                 server.stop()
-            except novaclient.openstack.common.apiclient.exceptions.BadRequest as ex:
+            except novaclient.exceptions.BadRequest as ex:
                 log.error(ex.message)
 
 def reset(server):
