@@ -75,7 +75,19 @@ def config_stack_vm(server):
 
 def jenkins_devstack(server):
     remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1')
-    remote(server, user='jenkins', command='cat $HOME/devstack-gate-log.txt')
+
+    limit = time.time() + 30000
+    try:
+        while time.time() < limit:
+            time.sleep(5)
+            result = remote(server, user='jenkins', command='cat $HOME/devstack-gate-log.txt')
+            if len(result) > 0:
+                print result
+                return
+        log.warning('Timed out waiting for server {} to respond'.format(host.id))
+    except KeyboardInterrupt as ex:
+        print "\nInterrupted"
+        sys.exit(0)
 
 def find(f, seq):
     for item in seq:
@@ -114,7 +126,7 @@ def fetch_image():
         log.error('Failed to fetch image {} {}'.format(config.image, ex.message))
         sys.exit(1)
 
-def create(name, key_name=None, files=dict(), clock=True):
+def create(name, key_name=None, files=dict()):
     log.info('Creating server {}'.format(name))
     server = client.nova.servers.create(name, image, flavor, key_name=key_name, meta=meta, files=files)
     log.info('Created server {} with password {}'.format(server.id, server.adminPass))
@@ -122,7 +134,7 @@ def create(name, key_name=None, files=dict(), clock=True):
         log.info('Server has started with IP address {}'.format(server.accessIPv4 or server.addresses['private'][0]['addr']))
     return server
  
-def remote(server, user='root', command=config.command, clock=True):
+def remote(server, user='root', command=config.command):
     if not server:
         return
     name = server.name
@@ -132,7 +144,7 @@ def remote(server, user='root', command=config.command, clock=True):
         log.info(result)
     return result
 
-def ping(server, clock=True):
+def ping(server):
     if not server:
         return
     name = server.name
