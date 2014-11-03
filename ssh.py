@@ -58,10 +58,15 @@ def initialize_client(host, port, password, user='root', config=None, keyfile=No
         sys.exit(1)
     return c
 
+def is_connected(ssh):
+    transport = ssh.get_transport() if ssh else None
+    return transport and transport.is_active()
+
 def connect(host, port, password, user='root', config=None, keyfile=None):
     key = '_client_{}@{}'.format(user, host)
-    if not key in session:
-        session[key] = initialize_client(host, port, password, user=user, config=config, keyfile=keyfile)
+    if key in session and is_connected(session[key]):
+        return session[key]
+    session[key] = initialize_client(host, port, password, user=user, config=config, keyfile=keyfile)
     return session[key]
 
 def remote_exec(address, user='root', password=None, command=None, config=None, keyfile=None, port=22, quiet=False):
