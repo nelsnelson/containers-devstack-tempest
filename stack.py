@@ -75,6 +75,7 @@ def config_stack_vm(server):
 
 def jenkins_devstack(server):
     remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1')
+    remote(server, user='jenkins', command='cat $HOME/devstack-gate-log.txt')
 
 def find(f, seq):
     for item in seq:
