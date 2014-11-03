@@ -18,6 +18,8 @@ paramiko.util.log_to_file('/tmp/paramiko-ssh.log')
 log = logs.logger('SSH')
 
 def initialize_ssh_config(config):
+    if not os.path.isfile(config):
+        return None
     conf = paramiko.SSHConfig()
     path = os.path.expanduser(config)
     try:
