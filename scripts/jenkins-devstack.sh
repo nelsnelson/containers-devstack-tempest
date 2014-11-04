@@ -5,6 +5,11 @@ SCRIPT_DIR=${PATH_OF_THIS_SCRIPT/".\/"/"$(pwd)\/"}
 
 source $SCRIPT_DIR/jenkins-devstack-env.sh
 
+sudo DEBIAN_FRONTEND=noninteractive apt-get \
+    --option "Dpkg::Options::=--force-confold" \
+    --assume-yes install build-essential python-dev \
+    python-software-properties linux-headers-virtual linux-headers-`uname -r`
+
 mkdir -p $WORKSPACE
 git clone $REPO_URL/$ZUUL_PROJECT $ZUUL_URL/$ZUUL_PROJECT
 pushd $ZUUL_URL/$ZUUL_PROJECT
@@ -20,7 +25,7 @@ export NTP_SERVER=pool.ntp.org
 rm $HOME/devstack-gate-log.txt
 mkdir -p $HOME/cache/files/
 mkdir -p $WORKSPACE/tmp
-$($WORKSPACE/safe-devstack-vm-gate-wrap.sh > $WORKSPACE/tmp/devstack-gate-log.txt & )
+nohup $WORKSPACE/safe-devstack-vm-gate-wrap.sh >$WORKSPACE/tmp/devstack-gate-log.txt 2>&1 &
 wait ${!}
 mv $WORKSPACE/tmp/devstack-gate-log.txt $HOME/devstack-gate-log.txt
 rmdir $WORKSPACE/tmp
