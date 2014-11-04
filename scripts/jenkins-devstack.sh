@@ -18,8 +18,9 @@ export DEBIAN_FRONTEND=noninteractive
 echo "debconf debconf/frontend select Noninteractive" | debconf-set-selections
 export NTP_SERVER=pool.ntp.org
 rm $HOME/devstack-gate-log.txt
+mkdir -p $HOME/cache/files/
 mkdir -p $WORKSPACE/tmp
 $($WORKSPACE/safe-devstack-vm-gate-wrap.sh > $WORKSPACE/tmp/devstack-gate-log.txt & )
 wait ${!}
-mv $WORKSPACE/tmp/devstack-gate-log.txt $WORKSPACE/devstack-gate-log.txt
+mv $WORKSPACE/tmp/devstack-gate-log.txt $HOME/devstack-gate-log.txt
 rmdir $WORKSPACE/tmp
