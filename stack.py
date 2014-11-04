@@ -75,19 +75,25 @@ def config_stack_vm(server):
 
 def jenkins_devstack(server):
     remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1')
+    watch_for_devstack_log(server)
+    copy_devstack_log(server)
+    print commands.getoutput('cat ./devstack-gate-log.txt')
 
+def watch_for_devstack_log(server):
     limit = time.time() + 30000
     try:
         while time.time() < limit:
-            time.sleep(5)
-            result = remote(server, user='jenkins', command='cat $HOME/devstack-gate-log.txt')
+            time.sleep(20)
+            result = remote(server, user='jenkins', command='[[ -f $HOME/devstack-gate-log.txt ]] && echo yes')
             if len(result) > 0:
-                print result
                 return
-        log.warning('Timed out waiting for server {} to respond'.format(host.id))
+        log.warning('Timed out waiting for $HOME/devstack-gate-log.txt to appear')
     except KeyboardInterrupt as ex:
         print "\nInterrupted"
         sys.exit(0)
+
+def copy_devstack_log(server):
+    commands.getoutput('scp -i ./id_rsa jenkins@{}:$HOME/devstack-gate-log.txt ./'.format(server.accessIPv4))
 
 def find(f, seq):
     for item in seq:
