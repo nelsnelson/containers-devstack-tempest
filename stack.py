@@ -93,7 +93,7 @@ def wait_for_devstack_gate_to_finish(server):
         sys.exit(0)
 
 def copy_devstack_log(server):
-    commands.getoutput('scp -i ./id_rsa jenkins@{}:$HOME/devstack-gate-log.txt ./'.format(server.accessIPv4))
+    print commands.getoutput('scp -i ./id_rsa jenkins@{}:~/devstack-gate-log.txt .'.format(server.accessIPv4))
 
 def find(f, seq):
     for item in seq:
