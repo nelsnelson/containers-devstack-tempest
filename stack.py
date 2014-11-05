@@ -139,7 +139,7 @@ def create(name, key_name=None, files=dict()):
     if wait.has_state(server, 'ACTIVE', config.timeout):
         log.info('Server has started with IP address {}'.format(server.accessIPv4 or server.addresses['private'][0]['addr']))
     return server
- 
+
 def remote(server, user='root', command=config.command):
     if not server:
         return
