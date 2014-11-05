@@ -56,7 +56,7 @@ def stack_vm():
             '/root/.ssh/authorized_keys': public_key_file(),
             '/root/bootstrap.sh': content('scripts/bootstrap.sh')
         }
-        server = create(name, files=files, timeout=1000)
+        server = create(name, files=files)
         time.sleep(10)
         ping(server)
         log.info('Created server {}'.format(server.name))
