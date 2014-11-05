@@ -11,4 +11,4 @@ region = IAD
 auth_url = https://identity.api.rackspacecloud.com/v2.0/
 auth_system = rackspace
 use_auth_plugin = True
-
+timeout = 500
