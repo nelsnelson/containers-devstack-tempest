@@ -3,7 +3,13 @@
 PATH_OF_THIS_SCRIPT=`dirname "${0}"`
 SCRIPT_DIR=${PATH_OF_THIS_SCRIPT/".\/"/"$(pwd)\/"}
 
-source $SCRIPT_DIR/jenkins-devstack-env.sh
+if [ -f $SCRIPT_DIR/jenkins-devstack-env.sh ]; then
+  source $SCRIPT_DIR/jenkins-devstack-env.sh
+fi
+
+if [ -f $SCRIPT_DIR/jenkins-devstack-env-overrides.sh ]; then
+  source $SCRIPT_DIR/jenkins-devstack-env-overrides.sh
+fi
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get \
     --option "Dpkg::Options::=--force-confold" \
@@ -26,4 +32,6 @@ rm $HOME/devstack-gate-log.txt
 mkdir -p $HOME/cache/files/
 nohup $WORKSPACE/safe-devstack-vm-gate-wrap.sh >$HOME/devstack-gate-log.txt 2>&1 &
 wait ${!}
-touch /tmp/gate-finished
+return_code=$?
+echo "${return_code}" > /tmp/gate-finished
+

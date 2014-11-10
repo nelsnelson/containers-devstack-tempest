@@ -73,11 +73,25 @@ def config_stack_vm(server):
     remote(server, command='chmod +x /root/bootstrap.sh')
     remote(server, command='nohup /root/bootstrap.sh 2>&1')
 
-def jenkins_devstack(server):
+def config_devstack_zuul_target(server):
+    if not (config.zuul_url and config.zuul_project and config.zuul_branch):
+        return
+    log.info('Configuring devstack "zuul" target')
+    remote(server, user='jenkins', command="""cat << EOF > $HOME/scripts/jenkins-devstack-env-overrides.sh
+export ZUUL_URL={url}
+export ZUUL_PROJECT={project}
+export ZUUL_BRANCH={branch}
+export DEVSTACK_GATE_TEMPEST_REGEX=tempest.api.compute.servers.test_servers.ServersTestJSON.test_create_server_with_admin_password
+""".format(url=config.zuul_url, project=config.zuul_project, branch=config.zuul_branch))
+
+def vm_devstack(server):
     remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1')
     wait_for_devstack_gate_to_finish(server)
     copy_devstack_log(server)
     print commands.getoutput('cat ./devstack-gate-log.txt')
+    return_code = int(commands.getoutput('cat /tmp/gate-finished'))
+    log.info("Exiting with return code {}".format(return_code))
+    sys.exit(return_code)
 
 def wait_for_devstack_gate_to_finish(server):
     limit = time.time() + 30000
@@ -194,7 +208,8 @@ def main():
         if not args.devstack_only:
             config_stack_vm(server)
         wait.until_up(server, timeout=1000, interval=2)
-        jenkins_devstack(server)
+        config_devstack_zuul_target(server)
+        vm_devstack(server)
     except KeyboardInterrupt as ex:
         print "\nInterrupted"
 

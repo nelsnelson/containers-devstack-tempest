@@ -52,3 +52,6 @@ use_auth_plugin = string('use_auth_plugin')
 insecure        = boolean('insecure', False)
 tear_down       = boolean('tear_down', True)
 
+zuul_url     = string('zuul_url', None)
+zuul_project = string('zuul_project', None)
+zuul_branch  = string('zuul_branch', None)
