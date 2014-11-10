@@ -41,7 +41,7 @@ def get_gateway(host, config=None):
     if config:
         conf = ssh_config(host, config=config)
     conf = ssh_config(host)
-    log.debug('Getting gateway for {}'.format(conf))
+    log.info('Getting gateway for {}'.format(conf))
     proxy_command = conf.get('proxycommand', None) if conf else None
     return paramiko.ProxyCommand(proxy_command) if proxy_command else None
 
