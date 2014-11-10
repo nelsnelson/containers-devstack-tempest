@@ -87,9 +87,8 @@ export DEVSTACK_GATE_TEMPEST_REGEX=tempest.api.compute.servers.test_servers.Serv
 def vm_devstack(server):
     remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1')
     wait_for_devstack_gate_to_finish(server)
-    copy_devstack_log(server)
-    print commands.getoutput('cat ./devstack-gate-log.txt')
-    return_code = int(commands.getoutput('cat /tmp/gate-finished'))
+    print_devstack_log(server)
+    return_code = int(remote(server, user='jenkins', command='cat /tmp/gate-finished'))
     log.info("Exiting with return code {}".format(return_code))
     sys.exit(return_code)
 
@@ -106,8 +105,9 @@ def wait_for_devstack_gate_to_finish(server):
         print "\nInterrupted"
         sys.exit(0)
 
-def copy_devstack_log(server):
-    print commands.getoutput('scp -i ./id_rsa jenkins@{}:~/devstack-gate-log.txt .'.format(server.accessIPv4))
+def print_devstack_log(server):
+    result = remote(server, user='jenkins', command='cat $HOME/devstack-gate-log.txt')
+    print result
 
 def find(f, seq):
     for item in seq:
