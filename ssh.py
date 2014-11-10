@@ -4,6 +4,7 @@ import logging
 import os
 import socket
 import sys
+import time
 
 import paramiko
 
@@ -44,20 +45,27 @@ def get_gateway(host, config=None):
     return paramiko.ProxyCommand(proxy_command) if proxy_command else None
 
 def initialize_client(host, port, password, user='root', config=None, keyfile=None):
-    try:
-        if keyfile:
-            log.info('Connecting to {}@{}:{} with keyfile {}'.format(user, host, port, keyfile))
-        elif password:
-            log.info('Connecting to {}@{}:{} with password {}'.format(user, host, port, password))
-        c = paramiko.SSHClient()
-        c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        if keyfile:
-            c.connect(host, port=port, username=user, key_filename=keyfile, sock=get_gateway(host, config=config))
-        else:
-            c.connect(host, port=port, username=user, password=password, sock=get_gateway(host, config=config))
-    except socket.error as e:
-        log.error('Low level socket error connecting to host %s: %s' % (host, e[1]))
-        sys.exit(1)
+    while True:
+        try:
+            if keyfile:
+                log.info('Connecting to {}@{}:{} with keyfile {}'.format(user, host, port, keyfile))
+            elif password:
+                log.info('Connecting to {}@{}:{} with password {}'.format(user, host, port, password))
+            c = paramiko.SSHClient()
+            c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            if keyfile:
+                c.connect(host, port=port, username=user, key_filename=keyfile, sock=get_gateway(host, config=config))
+            else:
+                c.connect(host, port=port, username=user, password=password, sock=get_gateway(host, config=config))
+            break
+        except socket.error as e:
+            log.error('Low level socket error connecting to host %s: %s' % (host, e[1]))
+            if e[1] == 'Connection refused':
+                log.warn('Attempting to reconnect...')
+                time.sleep(10)
+                continue
+            else:
+                sys.exit(1)
     return c
 
 def is_connected(ssh):
