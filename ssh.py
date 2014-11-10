@@ -19,11 +19,13 @@ paramiko.util.log_to_file('/tmp/paramiko-ssh.log')
 log = logs.logger('SSH')
 
 def initialize_ssh_config(config):
-    if not os.path.isfile(config):
-        log.info('No SSH config is available at {}'.format(config))
+    if not config:
+        log.info('Cannot initialize SSH config. No SSH config path was given.')
+    path = os.path.expanduser(config)
+    if not os.path.isfile(path):
+        log.info('No SSH config is available at {}'.format(path))
         return None
     conf = paramiko.SSHConfig()
-    path = os.path.expanduser(config)
     try:
         with open(path) as fd:
             conf.parse(fd)
