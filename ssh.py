@@ -41,10 +41,11 @@ def get_gateway(host, config=None):
     if config:
         conf = ssh_config(host, config=config)
     conf = ssh_config(host)
+    log.debug('Getting gateway for {}'.format(conf))
     proxy_command = conf.get('proxycommand', None) if conf else None
     return paramiko.ProxyCommand(proxy_command) if proxy_command else None
 
-def initialize_client(host, port, password, user='root', config=None, keyfile=None):
+def initialize_client(host, port, password=None, user='root', config=None, keyfile=None):
     while True:
         try:
             if keyfile:
@@ -72,7 +73,7 @@ def is_connected(ssh):
     transport = ssh.get_transport() if ssh else None
     return transport and transport.is_active()
 
-def connect(host, port, password, user='root', config=None, keyfile=None):
+def connect(host, port, password=None, user='root', config=None, keyfile=None):
     key = '_client_{}@{}'.format(user, host)
     if key in session and is_connected(session[key]):
         return session[key]
