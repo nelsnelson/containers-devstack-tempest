@@ -57,7 +57,7 @@ def stack_vm():
             '/root/bootstrap.sh': content('scripts/bootstrap.sh')
         }
         server = create(name, files=files)
-        time.sleep(10)
+        time.sleep(2)
         ping(server)
         log.info('Created server {}'.format(server.name))
         return server
