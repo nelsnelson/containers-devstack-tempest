@@ -19,16 +19,22 @@ paramiko.util.log_to_file('/tmp/paramiko-ssh.log')
 log = logs.logger('SSH')
 
 def initialize_ssh_config(config):
+    print 'wtf 1'
     if not os.path.isfile(config):
         return None
+    print 'wtf 2'
     conf = paramiko.SSHConfig()
+    print 'wtf 3'
     path = os.path.expanduser(config)
+    print 'wtf 4'
     try:
         with open(path) as fd:
             conf.parse(fd)
     except IOError:
         log.error('Unable to load SSH config file {}'.format(path))
         return None
+    print 'wtf 5'
+    print 'conf: {}'.format(conf)
     return conf
 
 def ssh_config(host, config=None):
