@@ -98,16 +98,24 @@ def remote_exec(address, user='root', password=None, command=None, config=None, 
         raise ex
     return ''
 
-def get(address, remote_path, user='root', password=None, config=None, keyfile=None, port=22):
+def sftp(address, remote_path, user='root', password=None, config=None, keyfile=None, port=22):
     try:
         ssh = connect(address, port, password, user=user, config=config, keyfile=keyfile)
         t = ssh.get_transport()
         sftp = paramiko.SFTPClient.from_transport(t)
-        remote_file_data = sftp.open(remote_path).read()
+        return sftp
     except paramiko.ssh_exception.SSHException as ex:
         log.error('Remote execution error: {}'.format(ex.message))
         raise ex
-    return remote_file_data
+
+def fetch(server, remote_path, user='root'):
+    target = server.accessIPv4
+    try:
+        sftp = ssh.sftp(target, remote_path, user=user, keyfile=private_key)
+        return sftp.open(remote_path).read()
+    except Exception as ex:
+        if ex[1] == 'No such file':
+            log.error("No such file: {}@{}:{}".format(user, target, remote_path))
 
 def main():
     if len(sys.argv) < 3:

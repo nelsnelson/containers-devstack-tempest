@@ -1,25 +1,13 @@
 #! /usr/bin/env python
 
-import ssh
-
-import novaclient
-
-import get
-import logs
 import sys
+
+import logs
+import ssh
 
 log = logs.logger('SFTP')
 
 private_key = './id_rsa'
-
-def sftp(server, remote_path, user='root'):
-    target = server.accessIPv4
-    try:
-        result = ssh.get(target, remote_path, user=user, keyfile=private_key)
-        print result
-    except Exception as ex:
-        if ex[1] == 'No such file':
-            log.error("No such file: {}@{}:{}".format(user, target, remote_path))
 
 def main():
     if len(sys.argv) < 3:
@@ -28,8 +16,7 @@ def main():
 
     id = sys.argv[1]
     file = sys.argv[2]
-    server = get.server(id)
-    sftp(server, file)
+    print ssh.fetch(server, file)
 
 if __name__ == '__main__':
     main()
