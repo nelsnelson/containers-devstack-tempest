@@ -57,7 +57,7 @@ def stack_vm():
             '/root/bootstrap.sh': content('scripts/bootstrap.sh')
         }
         server = create(name, files=files)
-        log.info "Pausing one minute for server to boot up"
+        log.info("Pausing one minute for server to boot up")
         time.sleep(60)
         ping(server)
         log.info('Created server {}'.format(server.name))
