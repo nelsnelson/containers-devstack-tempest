@@ -6,6 +6,7 @@ import novaclient
 
 import client
 import logs
+import sys
 
 log = logs.logger('SFTP')
 
