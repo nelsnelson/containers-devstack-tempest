@@ -17,8 +17,9 @@ def sftp(server, remote_path, user='root'):
     try:
         result = ssh.get(target, remote_path, user=user, keyfile=private_key)
         print result
-    except IOError as ex:
-        log.error("Error: {}".format(ex[1]))
+    except Exception as ex:
+        if ex[1] == 'No such file':
+            log.error("No such file: {}@{}:{}".format(user, target, remote_path))
 
 def main():
     if len(sys.argv) < 3:
