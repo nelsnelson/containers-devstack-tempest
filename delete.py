@@ -12,11 +12,14 @@ log = logs.logger('Load')
 
 def delete(id):
     server = get.server(id)
-    if server.status == 'ACTIVE':
-        log.info('Server {} is active'.format(server.id))
-        stop(server)
-    else:
-        reset(server)
+    try:
+        if server.status == 'ACTIVE':
+            log.info('Server {} is active'.format(server.id))
+            stop(server)
+        else:
+            reset(server)
+    except:
+        log.error("Failed to reset server state")
 
     log.info('Deleting server {}'.format(server.id))
     result = server.delete()
