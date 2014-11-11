@@ -100,7 +100,9 @@ def remote_exec(address, user='root', password=None, command=None, config=None, 
 
 def get(address, remote_path, user='root', password=None, config=None, keyfile=None, port=22):
     try:
-        sftp = connect(address, port, password, user=user, config=config, keyfile=keyfile)
+        ssh = connect(address, port, password, user=user, config=config, keyfile=keyfile)
+        t = ssh.get_transport()
+        sftp = paramiko.SFTPClient.from_transport(t)
         remote_file_data = sftp.open(remote_path).read()
     except paramiko.ssh_exception.SSHException as ex:
         log.error('Remote execution error: {}'.format(ex.message))
