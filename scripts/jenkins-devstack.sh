@@ -27,6 +27,8 @@ popd
 cp $WORKSPACE/devstack-gate/devstack-vm-gate-wrap.sh $WORKSPACE/safe-devstack-vm-gate-wrap.sh
 export DEBIAN_FRONTEND=noninteractive
 echo "debconf debconf/frontend select Noninteractive" | debconf-set-selections
+apt-get install --assume-yes --fix-missing ntp
+echo "server pool.ntp.org" > /etc/ntp.conf
 export NTP_SERVER=pool.ntp.org
 rm $HOME/devstack-gate-log.txt
 mkdir -p $HOME/cache/files/
