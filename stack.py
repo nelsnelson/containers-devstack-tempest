@@ -106,6 +106,8 @@ def wait_for_devstack_gate_to_finish(server):
         sys.exit(0)
 
 def print_devstack_log(server):
+    sftp = paramiko.SFTPClient.from_transport(t)
+    sftp.open('$HOME/devstack-gate-log.txt').read()
     result = remote(server, user='jenkins', command='cat $HOME/devstack-gate-log.txt')
     print result
 

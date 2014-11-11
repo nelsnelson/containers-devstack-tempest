@@ -98,6 +98,15 @@ def remote_exec(address, user='root', password=None, command=None, config=None, 
         raise ex
     return ''
 
+def get(address, remote_path, user='root', password=None, config=None, keyfile=None, port=22):
+    try:
+        sftp = connect(address, port, password, user=user, config=config, keyfile=keyfile)
+        remote_file_data = sftp.open(remote_path).read()
+    except paramiko.ssh_exception.SSHException as ex:
+        log.error('Remote execution error: {}'.format(ex.message))
+        raise ex
+    return remote_file_data
+
 def main():
     if len(sys.argv) < 3:
         print 'Usage: ./ssh.py <ip-address> <password> <command> [ssh-config-file]'
