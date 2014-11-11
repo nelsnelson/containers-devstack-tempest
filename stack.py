@@ -81,7 +81,7 @@ def config_devstack_zuul_target(server):
 export ZUUL_URL={url}
 export ZUUL_PROJECT={project}
 export ZUUL_BRANCH={branch}
-export DEVSTACK_GATE_TEMPEST_REGEX=tempest.api.compute.servers.test_servers.ServersTestJSON.test_create_server_with_admin_password
+export DEVSTACK_GATE_TEMPEST_REGEX=config.devstack_regex
 """.format(url=config.zuul_url, project=config.zuul_project, branch=config.zuul_branch))
 
 def vm_devstack(server):
@@ -106,9 +106,7 @@ def wait_for_devstack_gate_to_finish(server):
         sys.exit(0)
 
 def print_devstack_log(server):
-    sftp = paramiko.SFTPClient.from_transport(t)
-    sftp.open('$HOME/devstack-gate-log.txt').read()
-    result = remote(server, user='jenkins', command='cat $HOME/devstack-gate-log.txt')
+    result = ssh.sftp(server, '$HOME/devstack-gate-log.txt', user='jenkins')
     print result
 
 def find(f, seq):
