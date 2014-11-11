@@ -75,12 +75,15 @@ def is_connected(ssh):
     transport = ssh.get_transport() if ssh else None
     return transport and transport.is_active()
 
-def connect(host, port, password=None, user='root', config=None, keyfile=None):
+def connect(host, port, password=None, user='root', config=None, keyfile=None, mode=None):
     key = '_client_{}@{}'.format(user, host)
     if key in session and is_connected(session[key]):
         return session[key]
     session[key] = initialize_client(host, port, password, user=user, config=config, keyfile=keyfile)
-    return session[key]
+    if mode == 'sftp':
+        return paramiko.SFTPClient.from_transport(session[key].get_transport())
+    else:
+        return session[key]
 
 def remote_exec(address, user='root', password=None, command=None, config=None, keyfile=None, port=22, quiet=False):
     if not ((password or keyfile) and command):
@@ -98,26 +101,18 @@ def remote_exec(address, user='root', password=None, command=None, config=None, 
         raise ex
     return ''
 
-def sftp(address, remote_path, user='root', password=None, config=None, keyfile=None, port=22):
+def remote_file(address, user='root', password=None, remote_path=None, config=None, keyfile=None, port=22):
     try:
         ssh = connect(address, port, password, user=user, config=config, keyfile=keyfile)
-        t = ssh.get_transport()
-        sftp = paramiko.SFTPClient.from_transport(t)
-        return sftp
-    except paramiko.ssh_exception.SSHException as ex:
-        log.error('Remote execution error: {}'.format(ex.message))
-        raise ex
-
-def fetch(server, remote_path, user='root'):
-    target = server.accessIPv4
-    try:
-        sftp = sftp(target, remote_path, user=user, keyfile=private_key)
         return sftp.open(remote_path).read()
     except Exception as ex:
         if (type(ex) is tuple or type(ex) is list) and ex[1] == 'No such file':
             log.error('No such file: {}@{}:{}'.format(user, target, remote_path))
         else:
             log.error('Error: {}'.format(ex))
+
+def fetch(server, remote_path, user='root', keyfile=None):
+    return remote_file(server.accessIPv4, user=user, remote_path=remote_path, keyfile=keyfile)
 
 def main():
     if len(sys.argv) < 3:

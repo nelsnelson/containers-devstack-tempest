@@ -107,7 +107,7 @@ def wait_for_devstack_gate_to_finish(server):
         sys.exit(0)
 
 def print_devstack_log(server):
-    print ssh.fetch(server, '$HOME/devstack-gate-log.txt', user='jenkins')
+    print ssh.fetch(server, '$HOME/devstack-gate-log.txt', user='jenkins', )
 
 def find(f, seq):
     for item in seq:

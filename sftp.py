@@ -13,9 +13,9 @@ def main():
         sys.exit(0)
 
     id = sys.argv[1]
-    file = sys.argv[2]
+    path = sys.argv[2]
     server = get.server(id)
-    print ssh.fetch(server, file)
+    print ssh.fetch(server, path, keyfile=private_key)
 
 if __name__ == '__main__':
     main()
