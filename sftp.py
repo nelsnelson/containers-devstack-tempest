@@ -14,7 +14,10 @@ private_key = './id_rsa'
 
 def sftp(server, remote_path, user='root'):
     target = server.accessIPv4
-    result = ssh.get(target, remote_path, user=user, keyfile=private_key)
+    try:
+        result = ssh.get(target, remote_path, user=user, keyfile=private_key)
+    except IOError as ex:
+        log.error("Error: ", ex[1])
     print result
 
 def main():
