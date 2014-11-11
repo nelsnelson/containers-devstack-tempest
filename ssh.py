@@ -106,7 +106,7 @@ def remote_file(address, user='root', password=None, remote_path=None, config=No
         sftp = connect(address, port, password, user=user, config=config, keyfile=keyfile, mode='sftp')
         return sftp.open(remote_path).read()
     except Exception as ex:
-        log.error('Error fetching file {}@{}:{} - {}'.format(user, target, remote_path, ex))
+        log.error('Error fetching file {}@{}:{} - {}'.format(user, address, remote_path, ex))
 
 def fetch(server, remote_path, user='root', keyfile=None):
     return remote_file(server.accessIPv4, user=user, remote_path=remote_path, keyfile=keyfile)
