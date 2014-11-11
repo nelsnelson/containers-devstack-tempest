@@ -109,7 +109,7 @@ def wait_for_devstack_gate_to_finish(server):
         sys.exit(0)
 
 def print_devstack_log(server):
-    result = ssh.fetch(server, '/home/jenkins/devstack-gate-log.txt, user='jenkins', keyfile=private_key)
+    result = ssh.fetch(server, '/home/jenkins/devstack-gate-log.txt', user='jenkins', keyfile=private_key)
     if result:
         print result
 
