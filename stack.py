@@ -57,8 +57,6 @@ def stack_vm():
             '/root/bootstrap.sh': content('scripts/bootstrap.sh')
         }
         server = create(name, files=files)
-        log.info("Pausing one minute for server to boot up")
-        time.sleep(60)
         ping(server)
         log.info('Created server {}'.format(server.name))
         return server
@@ -73,6 +71,9 @@ def stack_vm():
 def config_stack_vm(server):
     remote(server, command='chmod +x /root/bootstrap.sh')
     remote(server, command='nohup /root/bootstrap.sh 2>&1')
+    log.info("Pausing one minute for server to finish rebooting")
+    time.sleep(60)
+    wait.until_up(server, timeout=1000, interval=5, keyfile=private_key)
 
 def config_devstack_zuul_target(server):
     if not (config.zuul_url and config.zuul_project and config.zuul_branch):
@@ -108,7 +109,7 @@ def wait_for_devstack_gate_to_finish(server):
         sys.exit(0)
 
 def print_devstack_log(server):
-    result = ssh.fetch(server, '$HOME/devstack-gate-log.txt', user='jenkins', keyfile=private_key)
+    result = ssh.fetch(server, '/home/jenkins/devstack-gate-log.txt, user='jenkins', keyfile=private_key)
     if result:
         print result
 
@@ -210,7 +211,6 @@ def main():
         server = setup()
         if not args.devstack_only:
             config_stack_vm(server)
-        wait.until_up(server, timeout=1000, interval=5, keyfile=private_key)
         config_devstack_zuul_target(server)
         vm_devstack(server)
     except KeyboardInterrupt as ex:
