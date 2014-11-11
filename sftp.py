@@ -17,7 +17,7 @@ def main():
 
     id = sys.argv[1]
     file = sys.argv[2]
-    server = get.get(id)
+    server = get.server(id)
     print ssh.fetch(server, file)
 
 if __name__ == '__main__':
