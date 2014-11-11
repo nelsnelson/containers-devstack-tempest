@@ -2,6 +2,7 @@
 
 import sys
 
+import get
 import logs
 import ssh
 
@@ -16,6 +17,7 @@ def main():
 
     id = sys.argv[1]
     file = sys.argv[2]
+    server = get.get(id)
     print ssh.fetch(server, file)
 
 if __name__ == '__main__':
