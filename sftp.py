@@ -27,11 +27,11 @@ def server(id):
     return server
 
 def main():
+    if len(sys.argv) < 3:
+        print 'Please provide a host id'
+        sys.exit(0)
     if len(sys.argv) < 2:
         print 'Please provide a remote file to access'
-        sys.exit(0)
-    if len(sys.argv) < 1:
-        print 'Please provide a host id'
         sys.exit(0)
 
     id = sys.argv[1]
