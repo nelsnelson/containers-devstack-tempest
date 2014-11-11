@@ -3,10 +3,7 @@
 import sys
 
 import get
-import logs
 import ssh
-
-log = logs.logger('SFTP')
 
 private_key = './id_rsa'
 

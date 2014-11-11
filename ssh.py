@@ -111,7 +111,7 @@ def sftp(address, remote_path, user='root', password=None, config=None, keyfile=
 def fetch(server, remote_path, user='root'):
     target = server.accessIPv4
     try:
-        sftp = ssh.sftp(target, remote_path, user=user, keyfile=private_key)
+        sftp = sftp(target, remote_path, user=user, keyfile=private_key)
         return sftp.open(remote_path).read()
     except Exception as ex:
         if (type(ex) is tuple or type(ex) is list) and ex[1] == 'No such file':
