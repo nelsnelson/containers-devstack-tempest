@@ -57,7 +57,8 @@ def stack_vm():
             '/root/bootstrap.sh': content('scripts/bootstrap.sh')
         }
         server = create(name, files=files)
-        time.sleep(2)
+        log.info "Pausing one minute for server to boot up"
+        time.sleep(60)
         ping(server)
         log.info('Created server {}'.format(server.name))
         return server
@@ -152,7 +153,7 @@ def create(name, key_name=None, files=dict()):
     log.info('Creating server {}'.format(name))
     server = client.nova.servers.create(name, image, flavor, key_name=key_name, meta=meta, files=files)
     log.info('Created server {} with password {}'.format(server.id, server.adminPass))
-    if wait.has_state(server, 'ACTIVE', config.timeout):
+    if wait.has_state(server, 'ACTIVE', config.timeout, silently=True):
         log.info('Server has started with IP address {}'.format(server.accessIPv4 or server.addresses['private'][0]['addr']))
     return server
 
