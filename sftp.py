@@ -19,7 +19,7 @@ def sftp(server, remote_path, user='root'):
 
 def main():
     if len(sys.argv) < 3:
-        print 'Usage:', __name__, ' <server_id> <remote_path>'
+        print 'Usage:', sys.argv[0], ' <server_id> <remote_path>'
         sys.exit(0)
 
     id = sys.argv[1]
