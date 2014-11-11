@@ -115,7 +115,9 @@ def fetch(server, remote_path, user='root'):
         return sftp.open(remote_path).read()
     except Exception as ex:
         if ex[1] == 'No such file':
-            log.error("No such file: {}@{}:{}".format(user, target, remote_path))
+            log.error('No such file: {}@{}:{}'.format(user, target, remote_path))
+        else:
+            log.error('Error: {}'.format(ex[1]))
 
 def main():
     if len(sys.argv) < 3:
