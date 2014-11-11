@@ -18,7 +18,7 @@ def sftp(server, remote_path, user='root'):
         result = ssh.get(target, remote_path, user=user, keyfile=private_key)
         print result
     except IOError as ex:
-        log.error("Error: ", ex[1])
+        log.error("Error: {}".format(ex[1]))
 
 def main():
     if len(sys.argv) < 3:
