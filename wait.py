@@ -63,7 +63,7 @@ def until_gone(server, timeout=config.timeout):
 
     return False
 
-def until_up(host, timeout=config.timeout, interval=1):
+def until_up(host, timeout=config.timeout, interval=1, user='root', keyfile=None):
     if not host:
         return
     log.info('Waiting until server {} is up'.format(host.id))
@@ -72,8 +72,7 @@ def until_up(host, timeout=config.timeout, interval=1):
         while time.time() < limit:
             time.sleep(interval)
             try:
-                result = ssh.remote_exec(host.accessIPv4, host.adminPass, 'uptime')
-                log.info('Result of uptime for server: {}'.format(result))
+                result = ssh.remote_exec(host.accessIPv4, user=user, command='uptime', keyfile=keyfile)
             except Exception as ex:
                 log.warning('Server {} is not up yet'.format(host.id))
                 continue
