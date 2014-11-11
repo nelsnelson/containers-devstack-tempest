@@ -103,7 +103,7 @@ def remote_exec(address, user='root', password=None, command=None, config=None, 
 
 def remote_file(address, user='root', password=None, remote_path=None, config=None, keyfile=None, port=22):
     try:
-        ssh = connect(address, port, password, user=user, config=config, keyfile=keyfile)
+        sftp = connect(address, port, password, user=user, config=config, keyfile=keyfile, mode='sftp')
         return sftp.open(remote_path).read()
     except Exception as ex:
         if (type(ex) is tuple or type(ex) is list) and ex[1] == 'No such file':
