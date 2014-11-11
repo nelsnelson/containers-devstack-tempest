@@ -77,7 +77,7 @@ def is_connected(ssh):
 
 def connect(host, port, password=None, user='root', config=None, keyfile=None, mode=None):
     key = '_client_{}@{}'.format(user, host)
-    if not (key in session or is_connected(session[key])):
+    if not (key in session and is_connected(session[key])):
         session[key] = initialize_client(host, port, password, user=user, config=config, keyfile=keyfile)
     if mode == 'sftp':
         return paramiko.SFTPClient.from_transport(session[key].get_transport())
