@@ -11,4 +11,11 @@ region = IAD
 auth_url = https://identity.api.rackspacecloud.com/v2.0/
 auth_system = rackspace
 use_auth_plugin = True
-timeout = 500
+timeout = 120
+
+zuul_url = http://github.com
+zuul_project = nelsnelson/nova
+zuul_branch = master
+libvirt_type = lxc
+devstack_regex = tempest.api.compute.servers.test_servers.ServersTestJSON.test_create_server_with_admin_password
+

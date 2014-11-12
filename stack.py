@@ -83,9 +83,11 @@ def config_devstack_zuul_target(server):
 export ZUUL_URL={url}
 export ZUUL_PROJECT={project}
 export ZUUL_BRANCH={branch}
+export DEVSTACK_GATE_LIBVIRT_TYPE={libvirt_type}
 export DEVSTACK_GATE_TEMPEST_REGEX={regex}
 """.format(url=config.zuul_url, project=config.zuul_project,
-    branch=config.zuul_branch, regex=config.devstack_regex))
+    branch=config.zuul_branch, libvirt_type=config.libvirt_type,
+    regex=config.devstack_regex))
 
 def vm_devstack(server):
     remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1')
