@@ -6,7 +6,7 @@ Config = ConfigParser.ConfigParser()
 Config.read('.config')
 stanza = os.path.basename(os.getcwd())
 if stanza == os.path.basename(os.path.dirname(os.path.realpath(__file__))):
-    stanza = 'iad'
+    stanza = 'ord'
 stanza = os.getenv('DATACENTER', stanza)
 
 def string(key, default=''):
