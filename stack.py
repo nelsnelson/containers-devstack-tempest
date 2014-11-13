@@ -89,9 +89,9 @@ def config_devstack_zuul_target(server):
 
     command = 'cat << EOF > $HOME/scripts/jenkins-devstack-env-overrides.sh'
 
-    for key,value in overrides:
+    for key,value in overrides.items():
         if value:
-            command = command + "\nexport " + key + "=" + value
+            command = "{}\nexport {}={}".format(command, key, value)
 
     remote(server, user='jenkins', command=command)
 
