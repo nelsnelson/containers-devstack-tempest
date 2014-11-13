@@ -78,16 +78,22 @@ def config_stack_vm(server):
 def config_devstack_zuul_target(server):
     if not (config.zuul_url and config.zuul_project and config.zuul_branch):
         return
-    log.info('Configuring devstack "zuul" target')
-    remote(server, user='jenkins', command="""cat << EOF > $HOME/scripts/jenkins-devstack-env-overrides.sh
-export ZUUL_URL={url}
-export ZUUL_PROJECT={project}
-export ZUUL_BRANCH={branch}
-export DEVSTACK_GATE_LIBVIRT_TYPE={libvirt_type}
-export DEVSTACK_GATE_TEMPEST_REGEX={regex}
-""".format(url=config.zuul_url, project=config.zuul_project,
-    branch=config.zuul_branch, libvirt_type=config.libvirt_type,
-    regex=config.devstack_regex))
+
+    overrides = {
+        'ZUUL_URL': config.zuul_url,
+        'ZUUL_PROJECT': config.zuul_project,
+        'ZUUL_BRANCH': config.zuul_branch,
+        'DEVSTACK_GATE_LIBVIRT_TYPE': config.libvirt_type,
+        'DEVSTACK_GATE_TEMPEST_REGEX': config.devstack_regex
+    }
+
+    command = 'cat << EOF > $HOME/scripts/jenkins-devstack-env-overrides.sh'
+
+    for key,value in overrides:
+        if value:
+            command = command + "\nexport " + key + "=" + value
+
+    remote(server, user='jenkins', command=command)
 
 def vm_devstack(server):
     remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1')
