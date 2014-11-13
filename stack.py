@@ -192,9 +192,12 @@ def ping(server):
                 ping_time = re.compile('.*time=(\d+(\.\d+)?) ms').match(result)
                 if unreachable:
                     log.warn('Ping failed {}: {}'.format(target, unreachable.group(0)))
+                else:
+                    return True
             else:
                 log.debug('No result from ping'.format(command))
             time.sleep(1)
+        log.warning('Timed out waiting for server {} to become pingable'.format(server.id))
     except KeyboardInterrupt as ex:
         print "\nInterrupted"
         sys.exit(0)
