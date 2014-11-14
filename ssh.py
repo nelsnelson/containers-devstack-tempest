@@ -154,7 +154,8 @@ def main():
         command=args.command,
         config=args.ssh_config
     )
-    print result
+    if result:
+        print result
 
 if __name__ == '__main__':
     main()
