@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 
-import logging
 import argparse
 import commands
+import logging
 import os
 import re
 import sys

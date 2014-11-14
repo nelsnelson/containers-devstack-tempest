@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 
+import argparse
 import logging
+import pwd
 import os
 import socket
 import sys
@@ -13,10 +15,41 @@ import logs
 default_config = '~/.ssh/config'
 session = {}
 
+username = pwd.getpwuid(os.getuid()).pw_name
 logging.getLogger('paramiko.transport').setLevel(logging.WARNING)
-paramiko.util.log_to_file('/tmp/paramiko-ssh.log')
+paramiko.util.log_to_file('/tmp/paramiko-ssh-{}.log'.format(username))
 
 log = logs.logger('SSH')
+
+args_parser = argparse.ArgumentParser(
+    prog='ssh.py',
+    description='SSH to a remote host and execute a command',
+    formatter_class=argparse.RawTextHelpFormatter)
+args_parser.add_argument(
+    '-i', '--identity-file',
+    action='store',
+    dest='identity',
+    required=False,
+    help='use an identity file for authentication')
+args_parser.add_argument(
+    '-p', '--password',
+    action='store',
+    dest='password',
+    required=False,
+    help='use a password for authentication')
+args_parser.add_argument(
+    '-f', '--config-file',
+    action='store',
+    dest='ssh_config',
+    required=False,
+    help='use an ssh config file')
+args_parser.add_argument(
+    '-c', '--command',
+    action='store',
+    dest='command',
+    required=False,
+    help='command to execute')
+
 
 def initialize_ssh_config(config):
     if not config:
@@ -111,14 +144,11 @@ def fetch(server, remote_path, user='root', keyfile=None):
     return remote_file(server.accessIPv4, user=user, remote_path=remote_path, keyfile=keyfile)
 
 def main():
-    if len(sys.argv) < 3:
+    args = args_parser.parse_args()
+    if len(sys.argv) < 2:
         print 'Usage: ./ssh.py <ip-address> <password> <command> [ssh-config-file]'
         sys.exit(0)
-    address = sys.argv[1]
-    password = sys.argv[2]
-    command = sys.argv[3]
-    config = sys.argv[4] if len(sys.argv) > 4 else None
-    print remote_exec(address, password, command, config)
+    print remote_exec(address, password=args.password, command=args.command, config=args.config)
 
 if __name__ == '__main__':
     main()
