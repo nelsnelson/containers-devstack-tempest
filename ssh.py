@@ -27,7 +27,6 @@ args_parser = argparse.ArgumentParser(
     formatter_class=argparse.RawTextHelpFormatter)
 args_parser.add_argument('host-address',
     store='host_address',
-    required=True,
     help='address or hostname for remote host')
 args_parser.add_argument(
     '-i', '--identity-file',
