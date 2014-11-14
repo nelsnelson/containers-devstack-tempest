@@ -25,8 +25,7 @@ args_parser = argparse.ArgumentParser(
     prog='ssh.py',
     description='SSH to a remote host and execute a command',
     formatter_class=argparse.RawTextHelpFormatter)
-args_parser.add_argument('host-address',
-    store='host_address',
+args_parser.add_argument('remote-host',
     help='address or hostname for remote host')
 args_parser.add_argument(
     '-i', '--identity-file',
