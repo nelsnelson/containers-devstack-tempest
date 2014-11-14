@@ -11,5 +11,6 @@ chown -R jenkins: /home/jenkins/.ssh
 mkdir -p /home/jenkins/scripts
 cp /tmp/a/scripts/jenkins-devstack-env.sh /home/jenkins/scripts
 cp /tmp/a/scripts/jenkins-devstack.sh /home/jenkins/scripts
+cp /tmp/a/scripts/pre_test_hook.sh /home/jenkins/scripts
 chown -R jenkins: /home/jenkins/scripts
 
