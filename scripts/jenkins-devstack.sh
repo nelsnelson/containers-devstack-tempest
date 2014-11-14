@@ -4,11 +4,16 @@ PATH_OF_THIS_SCRIPT=`dirname "${0}"`
 SCRIPT_DIR=${PATH_OF_THIS_SCRIPT/".\/"/"$(pwd)\/"}
 
 if [ -f $SCRIPT_DIR/jenkins-devstack-env.sh ]; then
-  source $SCRIPT_DIR/jenkins-devstack-env.sh
+    source $SCRIPT_DIR/jenkins-devstack-env.sh
 fi
 
 if [ -f $SCRIPT_DIR/jenkins-devstack-env-overrides.sh ]; then
-  source $SCRIPT_DIR/jenkins-devstack-env-overrides.sh
+    source $SCRIPT_DIR/jenkins-devstack-env-overrides.sh
+fi
+
+if [ -f $SCRIPT_DIR/pre_test_hook.sh ]; then
+    source $SCRIPT_DIR/pre_test_hook.sh
+    export SKIP_DEVSTACK_GATE_PROJECT=1
 fi
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get \
