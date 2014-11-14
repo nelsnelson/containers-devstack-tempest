@@ -147,7 +147,14 @@ def fetch(server, remote_path, user='root', keyfile=None):
 
 def main():
     args = args_parser.parse_args()
-    print remote_exec(args.remote_host, password=args.password, command=args.command, config=args.ssh_config)
+    result = remote_exec(
+        args.remote_host,
+        password=args.password,
+        keyfile=args.identity,
+        command=args.command,
+        config=args.ssh_config
+    )
+    print result
 
 if __name__ == '__main__':
     main()
