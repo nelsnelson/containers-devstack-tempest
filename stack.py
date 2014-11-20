@@ -223,6 +223,7 @@ def main():
         config_devstack_zuul_target(server)
         if not args.devstack_only:
             config_stack_vm(server)
+        config_devstack_zuul_target(server)
         vm_devstack(server)
     except KeyboardInterrupt as ex:
         print "\nInterrupted"
