@@ -105,6 +105,7 @@ def vm_devstack(server):
     print_devstack_log(server)
     return_code = int(remote(server, user='jenkins', command='cat /tmp/gate-finished'))
     log.info("Exiting with return code {}".format(return_code))
+    print 'Finished running devstack tempest tests on {}'.format(server.accessIPv4)
     sys.exit(return_code)
 
 def wait_for_devstack_gate_to_finish(server):
