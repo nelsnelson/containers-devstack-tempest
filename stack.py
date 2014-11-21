@@ -71,6 +71,10 @@ def stack_vm():
 def config_stack_vm(server):
     remote(server, command='chmod +x /root/bootstrap.sh')
     remote(server, command='nohup /root/bootstrap.sh 2>&1')
+    if config.libvirt_type == 'lxc':
+        remote(server, command='nohup /root/nbd-install.sh 2>&1')
+    remote(server, command='reboot')
+
     log.info("Pausing one minute for server to finish rebooting")
     time.sleep(60)
     wait.until_up(server, timeout=1000, interval=5, keyfile=private_key)
@@ -220,7 +224,6 @@ def main():
         if args.reset:
             reset()
         server = setup()
-        config_devstack_zuul_target(server)
         if not args.devstack_only:
             config_stack_vm(server)
         config_devstack_zuul_target(server)
