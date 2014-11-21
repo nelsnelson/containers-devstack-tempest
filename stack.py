@@ -72,7 +72,7 @@ def config_stack_vm(server):
     remote(server, command='chmod +x /root/bootstrap.sh')
     remote(server, command='nohup /root/bootstrap.sh 2>&1')
     if config.libvirt_type == 'lxc':
-        remote(server, command='nohup /root/nbd-install.sh 2>&1')
+        remote(server, command='nohup /tmp/a/scripts/nbd-install.sh 2>&1')
     remote(server, command='reboot')
 
     log.info("Pausing one minute for server to finish rebooting")
