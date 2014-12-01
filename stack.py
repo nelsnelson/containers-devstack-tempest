@@ -71,7 +71,6 @@ def stack_vm():
 def config_stack_vm(server):
     remote(server, command='chmod +x /root/bootstrap.sh')
     remote(server, command='nohup /root/bootstrap.sh 2>&1')
-    sys.exit(0) # TODO Remove
     if config.libvirt_type == 'lxc':
         remote(server, command='nohup /tmp/a/scripts/nbd-install.sh 2>&1 & disown')
     remote(server, command='reboot')
@@ -226,6 +225,7 @@ def main():
         if args.reset:
             reset()
         server = setup()
+        log.info("Waiting 120 seconds for ssh server to start on {}".format(server.id))
         time.sleep(120) # Wait for ssh server to start?
         if not args.devstack_only:
             config_stack_vm(server)
