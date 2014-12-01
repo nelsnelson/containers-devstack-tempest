@@ -226,6 +226,7 @@ def main():
         if args.reset:
             reset()
         server = setup()
+        time.sleep(120) # Wait for ssh server to start?
         if not args.devstack_only:
             config_stack_vm(server)
         config_devstack_zuul_target(server)
