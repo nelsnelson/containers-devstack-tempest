@@ -92,9 +92,9 @@ def initialize_client(host, port, password=None, user='root', config=None, keyfi
             c = paramiko.SSHClient()
             c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             if keyfile:
-                c.connect(host, port=port, username=user, key_filename=keyfile, sock=get_gateway(host, config=config))
+                c.connect(host, port=port, username=user, key_filename=keyfile, sock=get_gateway(host, config=config), get_pty=True)
             else:
-                c.connect(host, port=port, username=user, password=password, sock=get_gateway(host, config=config))
+                c.connect(host, port=port, username=user, password=password, sock=get_gateway(host, config=config), get_pty=True)
             break
         except socket.error as e:
             log.error('Low level socket error connecting to host %s: %s' % (host, e[1]))
