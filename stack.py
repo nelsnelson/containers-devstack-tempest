@@ -97,6 +97,8 @@ def config_devstack_zuul_target(server):
         if value:
             command = "{}\nexport {}={}".format(command, key, value)
 
+    command = "{}\nEOF".format(command)
+
     remote(server, user='jenkins', command=command)
 
 def vm_devstack(server):

@@ -126,7 +126,7 @@ def remote_exec(address, user='root', password=None, command=None, config=None, 
         ssh = connect(address, port, password, user=user, config=config, keyfile=keyfile)
         if not quiet:
             log.info('Remote command to {}: {}'.format(address, command))
-        stdin, stdout, stderr = ssh.exec_command(command, get_pty=True)
+        stdin, stdout, stderr = ssh.exec_command(command)
         output = stdout.readlines()
         if output and len(output) > 0:
             return output[0].strip()
