@@ -92,9 +92,9 @@ def initialize_client(host, port, password=None, user='root', config=None, keyfi
             c = paramiko.SSHClient()
             c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             if keyfile:
-                c.connect(host, port=port, username=user, key_filename=keyfile, sock=get_gateway(host, config=config), get_pty=True)
+                c.connect(host, port=port, username=user, key_filename=keyfile, sock=get_gateway(host, config=config))
             else:
-                c.connect(host, port=port, username=user, password=password, sock=get_gateway(host, config=config), get_pty=True)
+                c.connect(host, port=port, username=user, password=password, sock=get_gateway(host, config=config))
             break
         except socket.error as e:
             log.error('Low level socket error connecting to host %s: %s' % (host, e[1]))
@@ -126,7 +126,7 @@ def remote_exec(address, user='root', password=None, command=None, config=None, 
         ssh = connect(address, port, password, user=user, config=config, keyfile=keyfile)
         if not quiet:
             log.info('Remote command to {}: {}'.format(address, command))
-        stdin, stdout, stderr = ssh.exec_command(command)
+        stdin, stdout, stderr = ssh.exec_command(command, get_pty=True)
         output = stdout.readlines()
         if output and len(output) > 0:
             return output[0].strip()
