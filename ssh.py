@@ -129,7 +129,7 @@ def remote_exec(address, user='root', password=None, command=None, config=None, 
         stdin, stdout, stderr = ssh.exec_command(command)
         output = stdout.readlines()
         if output and len(output) > 0:
-            return output[0].strip()
+            return ''.join(output).strip()
     except paramiko.ssh_exception.SSHException as ex:
         log.error('Remote execution error: {}'.format(ex.message))
         raise ex
