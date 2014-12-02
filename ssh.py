@@ -16,8 +16,8 @@ default_config = '~/.ssh/config'
 session = {}
 
 username = pwd.getpwuid(os.getuid()).pw_name
-logging.getLogger('paramiko.transport').setLevel(logging.WARNING)
-paramiko.util.log_to_file('/tmp/paramiko-ssh-{}.log'.format(username))
+#logging.getLogger('paramiko.transport').setLevel(logging.WARNING)
+#paramiko.util.log_to_file('/tmp/paramiko-ssh-{}.log'.format(username))
 
 log = logs.logger('SSH')
 

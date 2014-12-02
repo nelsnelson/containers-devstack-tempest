@@ -2,8 +2,10 @@
 
 echo 'nbd' | tee -a /etc/modules
 modprobe nbd
-if [ $(lsmod | grep -q nbd) ]; then
-    echo "Installed nbd"
+lsmod | grep -q nbd
+RESULT=$?
+if [ $RESULT -eq 0 ]; then
+    echo "The nbd module was installed"
 else
-    echo "Did not install nbd"
+    echo "The nbd module was not installed"
 fi
