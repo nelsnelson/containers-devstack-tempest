@@ -1,6 +1,7 @@
 #! /usr/bin/env bash
 
-export REPO_URL=https://review.openstack.org/p
+#export REPO_URL=https://review.openstack.org/p
+export REPO_URL=https://git.openstack.org
 export WORKSPACE=/home/jenkins/workspace/testing
 export ZUUL_URL=http://github.com
 export ZUUL_REF=HEAD

@@ -71,7 +71,6 @@ def stack_vm():
 def config_stack_vm(server):
     remote(server, command='cp $HOME/.ssh/authorized_keys $HOME/.ssh/id_rsa.pub')
     remote(server, command='chmod +x /root/bootstrap.sh')
-    remote(server, command='chmod +x /root/bootstrap.sh')
     remote(server, command='nohup /root/bootstrap.sh 2>&1')
     if config.libvirt_type == 'lxc':
         remote(server, command='nohup /tmp/a/scripts/nbd-install.sh 2>&1')
