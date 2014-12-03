@@ -15,7 +15,8 @@ def main():
     id = sys.argv[1]
     path = sys.argv[2]
     server = get.server(id)
-    print ssh.fetch(server, path, keyfile=private_key)
+    address = server.accesIPv4
+    print ssh.fetch(address, path, keyfile=private_key)
 
 if __name__ == '__main__':
     main()

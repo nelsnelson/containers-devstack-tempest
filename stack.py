@@ -69,6 +69,8 @@ def stack_vm():
 # (add user "jenkins" to sudoers) and reboot to make sure you're 
 # running a current kernel:
 def config_stack_vm(server):
+    remote(server, command='cp $HOME/.ssh/authorized_keys $HOME/.ssh/id_rsa.pub')
+    remote(server, command='chmod +x /root/bootstrap.sh')
     remote(server, command='chmod +x /root/bootstrap.sh')
     remote(server, command='nohup /root/bootstrap.sh 2>&1')
     if config.libvirt_type == 'lxc':
@@ -125,7 +127,10 @@ def wait_for_devstack_gate_to_finish(server):
         sys.exit(0)
 
 def print_devstack_log(server):
-    result = ssh.fetch(server, '/home/jenkins/devstack-gate-log.txt', user='jenkins', keyfile=private_key)
+    if not server:
+        return
+    target = server.accessIPv4
+    result = ssh.fetch(target, '/home/jenkins/devstack-gate-log.txt', user='jenkins', keyfile=private_key)
     if result:
         print result
 
@@ -183,6 +188,12 @@ def remote(server, user='root', command=config.command):
     if result:
         log.info(result)
     return result
+
+def send(server, local_path=None, remote_path=None, user='root'):
+    if not server:
+        return
+    target = server.accessIPv4
+    ssh.send(target, local_path=local_path, remote_path=remote_path, user=user, keyfile=private_key)
 
 def ping(server):
     if not server:

@@ -135,15 +135,25 @@ def remote_exec(address, user='root', password=None, command=None, config=None, 
         raise ex
     return ''
 
-def remote_file(address, user='root', password=None, remote_path=None, config=None, keyfile=None, port=22):
+def get_file(address, user='root', password=None, remote_path=None, config=None, keyfile=None, port=22):
     try:
         sftp = connect(address, port, password, user=user, config=config, keyfile=keyfile, mode='sftp')
         return sftp.open(remote_path).read()
     except Exception as ex:
         log.error('Error fetching file {}@{}:{} - {}'.format(user, address, remote_path, ex))
 
-def fetch(server, remote_path, user='root', keyfile=None):
-    return remote_file(server.accessIPv4, user=user, remote_path=remote_path, keyfile=keyfile)
+def put_file(address, user='root', password=None, local_path=None, remote_path=None, config=None, keyfile=None, port=22):
+    try:
+        sftp = connect(address, port, password, user=user, config=config, keyfile=keyfile, mode='sftp')
+        return sftp.put(local_path, remote_path)
+    except Exception as ex:
+        log.error('Error fetching file {}@{}:{} - {}'.format(user, address, remote_path, ex))
+
+def fetch(remote_address, remote_path, user='root', keyfile=None):
+    return get_file(remote_address, user=user, remote_path=remote_path, keyfile=keyfile)
+
+def send(remote_address, local_path, remote_path, user='root', keyfile=None):
+    return put_file(remote_address, user=user, local_path=local_path, remote_path=remote_path, keyfile=keyfile)
 
 def main():
     args = args_parser.parse_args()
