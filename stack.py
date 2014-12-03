@@ -84,6 +84,7 @@ def config_devstack_zuul_target(server):
         return
 
     overrides = {
+        'REPO_URL': config.repo_url,
         'ZUUL_URL': config.zuul_url,
         'ZUUL_PROJECT': config.zuul_project,
         'ZUUL_BRANCH': config.zuul_branch,

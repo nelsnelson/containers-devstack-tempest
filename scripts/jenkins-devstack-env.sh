@@ -2,6 +2,7 @@
 
 export REPO_URL=https://review.openstack.org/p
 export WORKSPACE=/home/jenkins/workspace/testing
+export ZUUL_URL=http://github.com
 export ZUUL_REF=HEAD
 export ZUUL_PROJECT=openstack/nova
 export ZUUL_BRANCH=master
