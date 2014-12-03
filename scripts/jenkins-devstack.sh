@@ -30,13 +30,11 @@ pushd $WORKSPACE
 git clone --depth 1 $REPO_URL/openstack-infra/devstack-gate
 popd
 cp $WORKSPACE/devstack-gate/devstack-vm-gate-wrap.sh $WORKSPACE/safe-devstack-vm-gate-wrap.sh
-export DEBIAN_FRONTEND=noninteractive
-echo "debconf debconf/frontend select Noninteractive" | debconf-set-selections
-apt-get install --assume-yes --fix-missing ntp
-echo "server pool.ntp.org" > /etc/ntp.conf
-export NTP_SERVER=pool.ntp.org
-rm $HOME/devstack-gate-log.txt
+if [ -f $HOME/devstack-gate-log.txt ]; then
+    rm $HOME/devstack-gate-log.txt
+fi
 mkdir -p $HOME/cache/files/
+export DEBIAN_FRONTEND=noninteractive
 nohup $WORKSPACE/safe-devstack-vm-gate-wrap.sh >$HOME/devstack-gate-log.txt 2>&1 &
 wait ${!}
 return_code=$?

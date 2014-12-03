@@ -1,5 +1,12 @@
 #! /usr/bin/env bash
 
+export DEBIAN_FRONTEND=noninteractive
+echo "debconf debconf/frontend select Noninteractive" | debconf-set-selections
+
+apt-get install --assume-yes --fix-missing ntp
+echo "server pool.ntp.org" > /etc/ntp.conf
+export NTP_SERVER=pool.ntp.org
+
 mkdir -p /home/jenkins/src
 pushd /home/jenkins/src
 #git clone https://review.openstack.org/p/openstack-infra/config
