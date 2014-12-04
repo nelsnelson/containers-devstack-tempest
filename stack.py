@@ -69,11 +69,11 @@ def stack_vm():
 # (add user "jenkins" to sudoers) and reboot to make sure you're 
 # running a current kernel:
 def config_stack_vm(server):
+    remote(server, command='cp /root/.ssh/authorized_keys /root/.ssh/id_rsa.pub')
     remote(server, command='chmod +x /root/bootstrap.sh')
     remote(server, command='nohup /root/bootstrap.sh 2>&1')
     if config.libvirt_type == 'lxc':
         remote(server, command='nohup /tmp/a/scripts/nbd-install.sh 2>&1')
-    remote(server, command='cp $HOME/.ssh/authorized_keys $HOME/.ssh/id_rsa.pub')
     remote(server, command='reboot')
 
     log.info("Pausing 60 seconds for server to finish rebooting")
@@ -228,7 +228,7 @@ def public_key_file():
     if not os.path.isfile(private_key):
         commands.getoutput("ssh-keygen -t rsa -P '' -N '' -f {}".format(private_key))
     return content(public_key)
- 
+
 def content(path):
     with open(path, 'r') as f:
         s = f.read()
