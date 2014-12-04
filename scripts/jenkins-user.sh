@@ -8,6 +8,8 @@ chmod 440 /etc/sudoers.d/admin
 mkdir -p /home/jenkins/.ssh
 cp /root/.ssh/authorized_keys /home/jenkins/.ssh/
 chown -R jenkins: /home/jenkins/.ssh
+mkdir -p /home/jenkins/src
+chown -R jenkins: /home/jenkins/src
 mkdir -p /home/jenkins/scripts
 cp /tmp/a/scripts/jenkins-devstack-env.sh /home/jenkins/scripts
 cp /tmp/a/scripts/jenkins-devstack.sh /home/jenkins/scripts
