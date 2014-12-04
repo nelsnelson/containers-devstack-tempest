@@ -148,7 +148,8 @@ def setup():
         server = stack_vm()
     log.info("Pausing 120 seconds for ssh server to start on {}".format(server.id))
     time.sleep(120) # Wait for ssh server to start?
-    wait.until_up(server, timeout=1000, interval=5, keyfile=private_key)
+    # TODO FIXME
+    #wait.until_up(server, timeout=1000, interval=5, keyfile=private_key)
     return server
 
 def reset():
