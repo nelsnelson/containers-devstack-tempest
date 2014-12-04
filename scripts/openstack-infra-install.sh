@@ -11,7 +11,7 @@ mkdir -p /home/jenkins/src
 pushd /home/jenkins/src
 git clone https://git.openstack.org/openstack-infra/system-config
 system-config/install_puppet.sh && system-config/install_modules.sh
-puppet apply --modulepath=/root/system-config/modules:/etc/puppet/modules -e \
+puppet apply --modulepath=/home/jenkins/src/system-config/modules:/etc/puppet/modules -e \
 "class { openstack_project::single_use_slave: install_users => false, ssh_key => \"$( cat $HOME/.ssh/id_rsa.pub | awk '{print $2}' )\" }"
 popd
 
