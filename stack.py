@@ -76,7 +76,7 @@ def config_stack_vm(server):
         remote(server, command='nohup /tmp/a/scripts/nbd-install.sh 2>&1')
     remote(server, command='reboot')
 
-    log.info("Pausing one minute for server to finish rebooting")
+    log.info("Pausing 60 seconds for server to finish rebooting")
     time.sleep(60)
     wait.until_up(server, timeout=1000, interval=5, keyfile=private_key)
 
@@ -146,6 +146,9 @@ def setup():
     server = find_server('^{}-.*'.format(name_prefix))
     if not server:
         server = stack_vm()
+    log.info("Pausing 120 seconds for ssh server to start on {}".format(server.id))
+    time.sleep(120) # Wait for ssh server to start?
+    wait.until_up(server, timeout=1000, interval=5, keyfile=private_key)
     return server
 
 def reset():
@@ -238,8 +241,6 @@ def main():
         if args.reset:
             reset()
         server = setup()
-        log.info("Waiting 120 seconds for ssh server to start on {}".format(server.id))
-        time.sleep(120) # Wait for ssh server to start?
         if not args.devstack_only:
             config_stack_vm(server)
         config_devstack_zuul_target(server)
