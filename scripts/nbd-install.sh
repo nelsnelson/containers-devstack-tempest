@@ -1,6 +1,7 @@
 #! /usr/bin/env bash
 
-echo 'nbd' | tee -a /etc/modules
+# echo 'nbd' | tee -a /etc/modules
+echo 'nbd' >> /etc/modules
 modprobe nbd
 lsmod | grep -q nbd
 RESULT=$?
