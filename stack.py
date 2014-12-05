@@ -70,6 +70,8 @@ def stack_vm():
 # running a current kernel:
 def config_stack_vm(server):
     remote(server, command='cp /root/.ssh/authorized_keys /root/.ssh/id_rsa.pub')
+    remote(server, command='ls /root/.ssh/id_rsa.pub')
+    sys.exit(0)
     remote(server, command='chmod +x /root/bootstrap.sh')
     remote(server, command='nohup /root/bootstrap.sh 2>&1')
     if config.libvirt_type == 'lxc':
