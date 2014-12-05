@@ -70,12 +70,12 @@ def stack_vm():
 # running a current kernel:
 def config_stack_vm(server):
     remote(server, command='cp /root/.ssh/authorized_keys /root/.ssh/id_rsa.pub')
-    remote(server, command='ls /root/.ssh/')
+    remote(server, command='ls -la /root/.ssh/')
     remote(server, command='chmod +x /root/bootstrap.sh')
     remote(server, command='nohup /root/bootstrap.sh 2>&1')
     if config.libvirt_type == 'lxc':
         remote(server, command='nohup /tmp/a/scripts/nbd-install.sh 2>&1')
-    remote(server, command='ls /root/.ssh/')
+    remote(server, command='ls -la /root/.ssh/')
     remote(server, command='reboot')
 
     log.info("Pausing 60 seconds for server to finish rebooting")
@@ -246,9 +246,9 @@ def main():
         server = setup()
         if not args.devstack_only:
             config_stack_vm(server)
-        remote(server, command='ls /root/.ssh/')
+        remote(server, command='ls -la /root/.ssh/')
         config_devstack_zuul_target(server)
-        remote(server, command='ls /root/.ssh/')
+        remote(server, command='ls -la /root/.ssh/')
         sys.exit(0)
         vm_devstack(server)
     except KeyboardInterrupt as ex:
