@@ -115,13 +115,14 @@ def vm_devstack(server):
     sys.exit(return_code)
 
 def wait_for_devstack_gate_to_finish(server):
+    log.info("Waiting for devstack gate to finish...")
     limit = time.time() + 30000
     try:
         while time.time() < limit:
             time.sleep(20)
             result = ''
             try:
-                result = remote(server, user='jenkins', command='[[ -f /tmp/gate-finished ]] && echo done')
+                #result = remote(server, user='jenkins', command='[[ -f /tmp/gate-finished ]] && echo done')
             except Exception as ex:
                 log.error("Error waiting for devstack-gate to finish: {}".format(ex.message))
             if len(result) > 0:
