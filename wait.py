@@ -66,7 +66,7 @@ def until_gone(server, timeout=config.timeout):
 def until_up(host, timeout=config.timeout, interval=1, user='root', keyfile=None):
     if not host:
         return
-    log.info('Waiting until server {} is up'.format(host.id))
+    log.info('Waiting until host {} is up'.format(host.id))
     limit = time.time() + timeout
     try:
         while time.time() < limit:
@@ -75,12 +75,12 @@ def until_up(host, timeout=config.timeout, interval=1, user='root', keyfile=None
                 result = ssh.remote_exec(host.accessIPv4, user=user, command='uptime', keyfile=keyfile, quiet=True)
                 if result:
                     print result
-                    log.warning('Server {} is up'.format(host.id))
+                    log.warning('Host {} is up'.format(host.id))
                     return True
             except Exception as ex:
-                log.warning('Server {} is not up yet'.format(host.id))
+                log.warning('Host {} is not up yet'.format(host.id))
                 continue
-        log.warning('Timed out waiting for server {} to boot up'.format(host.id))
+        log.warning('Timed out waiting for host {} to boot up'.format(host.id))
     except KeyboardInterrupt as ex:
         print "\nInterrupted"
         sys.exit(0)
@@ -90,31 +90,33 @@ def until_up(host, timeout=config.timeout, interval=1, user='root', keyfile=None
 def remote_exec(host, command, timeout=config.timeout):
     if not host:
         return
+    target = host.accessIPv4
     result = None
     limit = time.time() + timeout
     try:
         while time.time() < limit:
             time.sleep(0.5)
-            result = ssh.remote_exec(host.accessIPv4, host.adminPass, command)
+            result = ssh.remote_exec(target, host.adminPass, command)
             if len(result) > 0:
                 return result
-        log.warning('Timed out waiting for server {} to respond'.format(host.id))
+        log.warning('Timed out waiting for host {} to respond'.format(target))
     except KeyboardInterrupt as ex:
         print "\nInterrupted"
         sys.exit(0)
 
     return False
 
-def until_path_exists(server, path='/tmp', user='root'):
-    log.info('Waiting until file path exists {}:{}...'.format(server.accessIPv4, path))
+def until_path_exists(host, path='/tmp', user='root', keyfile=None):
+    target = host.accessIPv4
+    log.info('Waiting until file path exists {}:{}...'.format(target, path))
     limit = time.time() + 30000
     try:
         while time.time() < limit:
             time.sleep(20)
             result = ''
             try:
-                pass
-                result = remote(server, user=user, command='[[ -f {} ]] && echo done'.format(path))
+                command = '[[ -f {} ]] && echo done'.format(path)
+                result = ssh.remote_exec(target, user=user, keyfile=keyfile, command=command)
             except Exception as ex:
                 log.error("Error waiting for file {}: {}".format(path, ex.message))
             if len(result) > 0:
