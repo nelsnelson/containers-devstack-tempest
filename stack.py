@@ -122,6 +122,7 @@ def wait_for_devstack_gate_to_finish(server):
             time.sleep(20)
             result = ''
             try:
+                pass
                 #result = remote(server, user='jenkins', command='[[ -f /tmp/gate-finished ]] && echo done')
             except Exception as ex:
                 log.error("Error waiting for devstack-gate to finish: {}".format(ex.message))
