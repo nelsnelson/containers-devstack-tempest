@@ -104,7 +104,8 @@ def config_devstack_zuul_target(server):
     remote(server, user='jenkins', command=command)
 
 def vm_devstack(server):
-    remote(server, user='jenkins', command='$HOME/scripts/jenkins-devstack.sh 2>&1 & disown')
+    #remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1 &')
+    remote(server, user='jenkins', command='$HOME/scripts/jenkins-devstack.sh 2>&1 &')
     wait_for_devstack_gate_to_finish(server)
     print_devstack_log(server)
     return_code = int(remote(server, user='jenkins', command='cat /tmp/gate-finished'))
@@ -117,10 +118,11 @@ def wait_for_devstack_gate_to_finish(server):
     try:
         while time.time() < limit:
             time.sleep(20)
+            result = ''
             try:
                 result = remote(server, user='jenkins', command='[[ -f /tmp/gate-finished ]] && echo done')
             except Exception as ex:
-                log.error("Error waiting for devstack-gate to finish:", ex)
+                log.error("Error waiting for devstack-gate to finish: {}".format(ex.message))
             if len(result) > 0:
                 return
         log.warning('Timed out waiting for /tmp/gate-finished')
