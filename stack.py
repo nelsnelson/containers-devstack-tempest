@@ -118,7 +118,7 @@ def vm_devstack(server):
     sys.exit(return_code)
 
 def wait_for_file(server, f):
-    log.info("Waiting for devstack gate to finish...")
+    log.info('Waiting for file {}...'.format(f))
     limit = time.time() + 30000
     try:
         while time.time() < limit:
@@ -128,10 +128,10 @@ def wait_for_file(server, f):
                 pass
                 result = remote(server, user='jenkins', command='[[ -f {} ]] && echo done'.format(f))
             except Exception as ex:
-                log.error("Error waiting for devstack-gate to finish: {}".format(ex.message))
+                log.error("Error waiting for file{}: {}".format(f, ex.message))
             if len(result) > 0:
                 return
-        log.warning('Timed out waiting for /tmp/gate-finished')
+        log.warning('Timed out waiting for {}'.format(f))
     except KeyboardInterrupt as ex:
         print "\nInterrupted"
         sys.exit(0)
