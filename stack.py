@@ -119,7 +119,7 @@ def wait_for_devstack_gate_to_finish(server):
             time.sleep(20)
             try:
                 result = remote(server, user='jenkins', command='[[ -f /tmp/gate-finished ]] && echo done')
-            except paramiko.ssh_exception.SSHException as ex:
+            except Exception as ex:
                 log.error("Error waiting for devstack-gate to finish:", ex)
             if len(result) > 0:
                 return
