@@ -105,8 +105,8 @@ def config_devstack_zuul_target(server):
 
 def vm_devstack(server):
     #remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1 &')
-    #remote(server, user='jenkins', command='$HOME/scripts/jenkins-devstack.sh 2>&1 &')
-    remote(server, user='jenkins', command="screen -S jenkins-devstack -X '$HOME/scripts/jenkins-devstack.sh' 'cmd^M'")
+    remote(server, user='jenkins', command='$HOME/scripts/jenkins-devstack.sh 2>&1 &; bg')
+    # remote(server, user='jenkins', command="screen -S jenkins-devstack -X '$HOME/scripts/jenkins-devstack.sh' 'cmd^M'")
     wait_for_devstack_gate_to_finish(server)
     print_devstack_log(server)
     return_code = int(remote(server, user='jenkins', command='cat /tmp/gate-finished'))
