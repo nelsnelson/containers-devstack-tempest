@@ -71,7 +71,10 @@ def stack_vm():
 def config_stack_vm(server):
     remote(server, command='cp /root/.ssh/authorized_keys /root/.ssh/id_rsa.pub')
     remote(server, command='chmod +x /root/bootstrap.sh')
-    remote(server, command='nohup /root/bootstrap.sh 2>&1')
+    # remote(server, command='nohup /root/bootstrap.sh 2>&1')
+    remote(server, command='/root/bootstrap.sh &')
+    wait_for_file(server, '/tmp/openstack-infra-finished')
+
     if config.libvirt_type == 'lxc':
         remote(server, command='nohup /tmp/a/scripts/nbd-install.sh 2>&1')
     remote(server, command='reboot')
@@ -105,16 +108,16 @@ def config_devstack_zuul_target(server):
 
 def vm_devstack(server):
     #remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1 &')
-    remote(server, user='jenkins', command='$HOME/scripts/jenkins-devstack.sh 2>&1 &; bg')
+    remote(server, user='jenkins', command='$HOME/scripts/jenkins-devstack.sh &')
     # remote(server, user='jenkins', command="screen -S jenkins-devstack -X '$HOME/scripts/jenkins-devstack.sh' 'cmd^M'")
-    wait_for_devstack_gate_to_finish(server)
+    wait_for_file(server, '/tmp/gate-finished')
     print_devstack_log(server)
     return_code = int(remote(server, user='jenkins', command='cat /tmp/gate-finished'))
     log.info("Exiting with return code {}".format(return_code))
     print 'Finished running devstack tempest tests on {}'.format(server.accessIPv4)
     sys.exit(return_code)
 
-def wait_for_devstack_gate_to_finish(server):
+def wait_for_file(server, f):
     log.info("Waiting for devstack gate to finish...")
     limit = time.time() + 30000
     try:
@@ -123,7 +126,7 @@ def wait_for_devstack_gate_to_finish(server):
             result = ''
             try:
                 pass
-                result = remote(server, user='jenkins', command='[[ -f /tmp/gate-finished ]] && echo done')
+                result = remote(server, user='jenkins', command='[[ -f {} ]] && echo done'.format(f))
             except Exception as ex:
                 log.error("Error waiting for devstack-gate to finish: {}".format(ex.message))
             if len(result) > 0:
