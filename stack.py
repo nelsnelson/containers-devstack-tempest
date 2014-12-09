@@ -128,7 +128,7 @@ def wait_for_file(server, f, user='jenkins'):
                 pass
                 result = remote(server, user=user, command='[[ -f {} ]] && echo done'.format(f))
             except Exception as ex:
-                log.error("Error waiting for file{}: {}".format(f, ex.message))
+                log.error("Error waiting for file {}: {}".format(f, ex.message))
             if len(result) > 0:
                 return
         log.warning('Timed out waiting for {}'.format(f))
