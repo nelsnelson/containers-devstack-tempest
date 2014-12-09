@@ -73,7 +73,7 @@ def config_stack_vm(server):
     remote(server, command='chmod +x /root/bootstrap.sh')
     # remote(server, command='nohup /root/bootstrap.sh 2>&1')
     remote(server, command='/root/bootstrap.sh &')
-    wait_for_file(server, '/tmp/openstack-infra-finished')
+    wait_for_file(server, '/tmp/openstack-infra-finished', user='root')
 
     if config.libvirt_type == 'lxc':
         remote(server, command='nohup /tmp/a/scripts/nbd-install.sh 2>&1')
@@ -117,7 +117,7 @@ def vm_devstack(server):
     print 'Finished running devstack tempest tests on {}'.format(server.accessIPv4)
     sys.exit(return_code)
 
-def wait_for_file(server, f):
+def wait_for_file(server, f, user='jenkins'):
     log.info('Waiting for file {}...'.format(f))
     limit = time.time() + 30000
     try:
@@ -126,7 +126,7 @@ def wait_for_file(server, f):
             result = ''
             try:
                 pass
-                result = remote(server, user='jenkins', command='[[ -f {} ]] && echo done'.format(f))
+                result = remote(server, user=user, command='[[ -f {} ]] && echo done'.format(f))
             except Exception as ex:
                 log.error("Error waiting for file{}: {}".format(f, ex.message))
             if len(result) > 0:
