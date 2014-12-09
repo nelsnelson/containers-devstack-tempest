@@ -71,8 +71,8 @@ def stack_vm():
 def config_stack_vm(server):
     remote(server, command='cp /root/.ssh/authorized_keys /root/.ssh/id_rsa.pub')
     remote(server, command='chmod +x /root/bootstrap.sh')
-    # remote(server, command='nohup /root/bootstrap.sh 2>&1')
-    remote(server, command="screen -S bootstrap -X '/root/bootstrap.sh' 'cmd^M'")
+    remote(server, command='nohup /root/bootstrap.sh 2>&1')
+    # remote(server, command="screen -S bootstrap -X '/root/bootstrap.sh' 'cmd^M'")
     wait.until_path_exists(server, path='/tmp/openstack-infra-finished', keyfile=private_key)
 
     if config.libvirt_type == 'lxc':
@@ -107,8 +107,8 @@ def config_devstack_zuul_target(server):
     remote(server, user='jenkins', command=command)
 
 def vm_devstack(server):
-    #remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1 &')
-    remote(server, user='jenkins', command='$HOME/scripts/jenkins-devstack.sh &')
+    remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1')
+    # remote(server, user='jenkins', command='$HOME/scripts/jenkins-devstack.sh &')
     # remote(server, user='jenkins', command="screen -S jenkins-devstack -X '$HOME/scripts/jenkins-devstack.sh' 'cmd^M'")
     wait.until_path_exists(server, path='/tmp/gate-finished', user='jenkins', keyfile=private_key)
     print_devstack_log(server)
