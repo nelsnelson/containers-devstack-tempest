@@ -72,8 +72,8 @@ def config_stack_vm(server):
     remote(server, command='cp /root/.ssh/authorized_keys /root/.ssh/id_rsa.pub')
     remote(server, command='chmod +x /root/bootstrap.sh')
     # remote(server, command='nohup /root/bootstrap.sh 2>&1')
-    remote(server, command='/root/bootstrap.sh &')
-    wait_for_file(server, path='/tmp/openstack-infra-finished')
+    remote(server, command="screen -S bootstrap -X '/root/bootstrap.sh' 'cmd^M'")
+    wait.until_path_exists(server, path='/tmp/openstack-infra-finished')
 
     if config.libvirt_type == 'lxc':
         remote(server, command='nohup /tmp/a/scripts/nbd-install.sh 2>&1')
@@ -110,31 +110,12 @@ def vm_devstack(server):
     #remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1 &')
     remote(server, user='jenkins', command='$HOME/scripts/jenkins-devstack.sh &')
     # remote(server, user='jenkins', command="screen -S jenkins-devstack -X '$HOME/scripts/jenkins-devstack.sh' 'cmd^M'")
-    wait_for(server, path='/tmp/gate-finished', user='jenkins')
+    wait.until_path_exists(server, path='/tmp/gate-finished', user='jenkins')
     print_devstack_log(server)
     return_code = int(remote(server, user='jenkins', command='cat /tmp/gate-finished'))
     log.info("Exiting with return code {}".format(return_code))
     print 'Finished running devstack tempest tests on {}'.format(server.accessIPv4)
     sys.exit(return_code)
-
-def wait_for(server, path='/tmp', user='root'):
-    log.info('Waiting for file {}...'.format(path))
-    limit = time.time() + 30000
-    try:
-        while time.time() < limit:
-            time.sleep(20)
-            result = ''
-            try:
-                pass
-                result = remote(server, user=user, command='[[ -f {} ]] && echo done'.format(path))
-            except Exception as ex:
-                log.error("Error waiting for file {}: {}".format(path, ex.message))
-            if len(result) > 0:
-                return
-        log.warning('Timed out waiting for {}'.format(path))
-    except KeyboardInterrupt as ex:
-        print "\nInterrupted"
-        sys.exit(0)
 
 def print_devstack_log(server):
     if not server:

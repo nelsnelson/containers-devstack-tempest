@@ -105,6 +105,25 @@ def remote_exec(host, command, timeout=config.timeout):
 
     return False
 
+def until_path_exists(server, path='/tmp', user='root'):
+    log.info('Waiting until file path exists {}:{}...'.format(server.accessIPv4, path))
+    limit = time.time() + 30000
+    try:
+        while time.time() < limit:
+            time.sleep(20)
+            result = ''
+            try:
+                pass
+                result = remote(server, user=user, command='[[ -f {} ]] && echo done'.format(path))
+            except Exception as ex:
+                log.error("Error waiting for file {}: {}".format(path, ex.message))
+            if len(result) > 0:
+                return
+        log.warning('Timed out waiting for {}'.format(path))
+    except KeyboardInterrupt as ex:
+        print "\nInterrupted"
+        sys.exit(0)
+
 def find(f, seq):
     """Return first item in sequence where f(item) == True."""
     for item in seq:
