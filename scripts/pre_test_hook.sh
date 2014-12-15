@@ -7,6 +7,7 @@ pre_test_hook() {
     echo "Cloning https://github.com/nelsnelson/devstack-gate into /opt/stack/new/devstack-gate"
     git clone https://github.com/nelsnelson/devstack-gate /opt/stack/new/devstack-gate
 
+    echo "Attempting to adjust tempest.conf for libvirt-lxc"
     sed -i 's/\#suspend\=true/#suspend=true\nsuspend=false/' /opt/stack/new/tempest/etc/tempest.conf
     sed -i 's/\#rescue\=true/#rescue=true\nrescue=false/' /opt/stack/new/tempest/etc/tempest.conf
     sed -i 's/\#resize\=false/#resize=false\nresize=false/' /opt/stack/new/tempest/etc/tempest.conf
