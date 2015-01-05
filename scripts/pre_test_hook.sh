@@ -12,7 +12,7 @@ pre_test_hook() {
     echo "Cloning https://github.com/nelsnelson/devstack into /opt/stack/new/devstack"
     git clone https://github.com/nelsnelson/devstack /opt/stack/new/devstack
     pushd /opt/stack/new/devstack
-    git checkout libvirt-lxc-tempest-customization2
+    git checkout libvirt-lxc-tempest-customization
     popd
 }
 
