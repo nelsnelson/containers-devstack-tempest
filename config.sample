@@ -1,9 +1,9 @@
 
 [iad]
-user = m0lt3n
+user = m0lt3njenkins
 token = AUTH_TOKEN_CHANGEME
 account = 724740
-image = 598a4282-f14b-4e50-af4c-b3e52749d9f9
+image = cc6e0096-84f9-4beb-a21e-d80a11a769d8
 flavor = performance1-8
 
 region = IAD
@@ -13,9 +13,40 @@ auth_system = rackspace
 use_auth_plugin = True
 timeout = 120
 
-zuul_url = http://github.com
+repo_url = http://github.com
+zuul_url = /home/jenkins/workspace-cache
 zuul_project = nelsnelson/nova
 zuul_branch = master
-libvirt_type = lxc
 devstack_regex = tempest.api.compute.servers.test_servers.ServersTestJSON.test_create_server_with_admin_password
+
+
+[ord]
+user = m0lt3njenkins
+token = AUTH_TOKEN_CHANGEME
+account = 724740
+image = cc6e0096-84f9-4beb-a21e-d80a11a769d8
+flavor = performance1-8
+
+region = ORD
+
+auth_url = https://identity.api.rackspacecloud.com/v2.0/
+auth_system = rackspace
+use_auth_plugin = True
+timeout = 120
+
+repo_url = http://github.com
+zuul_url = /home/jenkins/workspace-cache
+#zuul_project = nelsnelson/nova
+zuul_project = nelsnelson/devstack-gate
+zuul_branch = master
+libvirt_type = lxc
+devstack_regex = tempest.api.compute.servers.test_delete_server.DeleteServersTestJSON.test_delete_active_server
+#devstack_regex = tempest.api.compute.servers.test_servers.ServersTestJSON.test_create_server_with_admin_password
+#devstack_regex = tempest.api.compute.servers.*JSON.*
+#devstack_regex = (?!.*\[.*\bslow\b.*\])(^tempest\.(api|scenario|thirdparty|cli))
+#devstack_regex = tempest.api.compute.servers.test_servers.ServersTestJSON
+#devstack_regex = tempest.api.compute.servers.test_servers.ServersTestJSON.test_create_server_with_ipv6_addr_only
+#devstack_regex = tempest.api.compute.servers.test_servers.ServersTestJSON.test_create_specify_keypair
+#devstack_regex = tempest.api.compute.servers.test_delete_server.DeleteServersTestJSON.test_delete_server_while_in_attached_volume
+
 
