@@ -95,6 +95,8 @@ def config_devstack_zuul_target(server):
         'DEVSTACK_GATE_LIBVIRT_TYPE': config.libvirt_type,
         'DEVSTACK_GATE_TEMPEST_REGEX': config.devstack_regex
     }
+    if config.concurrency:
+        overrides['TEMPEST_CONCURRENCY'] = config.concurrency
 
     command = 'cat << EOF > $HOME/scripts/jenkins-devstack-env-overrides.sh'
 

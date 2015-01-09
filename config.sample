@@ -40,6 +40,7 @@ zuul_url = /home/jenkins/workspace-cache
 zuul_project = nelsnelson/devstack-gate
 zuul_branch = master
 libvirt_type = lxc
+concurrency = 1
 devstack_regex = tempest.api.compute.servers.test_delete_server.DeleteServersTestJSON.test_delete_active_server
 #devstack_regex = tempest.api.compute.servers.test_servers.ServersTestJSON.test_create_server_with_admin_password
 #devstack_regex = tempest.api.compute.servers.*JSON.*
