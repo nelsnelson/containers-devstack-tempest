@@ -102,7 +102,7 @@ def config_devstack_zuul_target(server):
 
     for key,value in overrides.items():
         if value:
-            command = "{}\nexport {}={}".format(command, key, value)
+            command = "{}\nexport {}=\"{}\"".format(command, key, value)
 
     command = "{}\nEOF".format(command)
 
