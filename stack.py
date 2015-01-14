@@ -77,7 +77,7 @@ def config_stack_vm(server):
 
     # Attempt to execute script remotely, hang up, and have it continue to run
     #remote(server, command='nohup /root/bootstrap.sh > /tmp/bootstrap-log.txt 2>&1 &')
-    remote(server, command='/root/bootstrap.sh > /tmp/bootstrap-log.txt 2>&1 &; disown -h; exit')
+    remote(server, command='/root/bootstrap.sh &> /tmp/bootstrap-log.txt &; disown -h; exit')
 
     wait.until_path_exists(server, path='/tmp/openstack-infra-finished', keyfile=private_key)
     print_remote_file(server, '/tmp/bootstrap-log.txt')
@@ -118,9 +118,10 @@ def config_devstack_zuul_target(server):
 def vm_devstack(server):
     #remote(server, user='jenkins', command='$HOME/scripts/jenkins-devstack.sh &')
 
-    remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh &')
+    # Executes script remotely, but does not hang-up
+    #remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh &')
 
-    #remote(server, user='jenkins', command="screen -S jenkins-devstack -X '$HOME/scripts/jenkins-devstack.sh' 'cmd^M'")
+    remote(server, user='jenkins', command='$HOME/scripts/jenkins-devstack.sh 2>&1 &; disown -h; exit')
 
     wait.until_path_exists(server, path='/tmp/gate-finished', user='jenkins', keyfile=private_key)
     print_remote_file(server, '/home/jenkins/devstack-gate-log.txt')
