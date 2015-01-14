@@ -76,9 +76,10 @@ def config_stack_vm(server):
     # remote(server, command='nohup /root/bootstrap.sh 2>&1')
 
     # Attempt to execute script remotely, hang up, and have it continue to run
-    remote(server, command='nohup /root/bootstrap.sh &')
+    remote(server, command='nohup /root/bootstrap.sh > /tmp/bootstrap-log.txt 2>&1 &')
 
     wait.until_path_exists(server, path='/tmp/openstack-infra-finished', keyfile=private_key)
+    print_remote_file(server, '/tmp/bootstrap-log.txt')
 
     if config.libvirt_type == 'lxc':
         remote(server, command='nohup /tmp/a/scripts/nbd-install.sh 2>&1')
@@ -114,14 +115,10 @@ def config_devstack_zuul_target(server):
     remote(server, user='jenkins', command=command)
 
 def vm_devstack(server):
-    # Executes script remotely, but does not hang up
-    #remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1')
-
-    # Attempt to execute script remotely, hang up, and have it continue to run
-    remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh &')
-
+    remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1')
+    # remote(server, user='jenkins', command='$HOME/scripts/jenkins-devstack.sh &')
+    # remote(server, user='jenkins', command="screen -S jenkins-devstack -X '$HOME/scripts/jenkins-devstack.sh' 'cmd^M'")
     wait.until_path_exists(server, path='/tmp/gate-finished', user='jenkins', keyfile=private_key)
-
     print_devstack_log(server)
     return_code = int(remote(server, user='jenkins', command='cat /tmp/gate-finished'))
     log.info("Exiting with return code {}".format(return_code))

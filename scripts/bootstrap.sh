@@ -1,7 +1,5 @@
 #! /usr/bin/env bash
 
-exec > >(tee /tmp/bootstrap.log.txt)
-exec 2>&1
 # Upgrade the server, install git, update the system clock, set up a
 # "jenkins" account, add user "jenkins" to sudoers, install pip packages,
 # add tox via pip (because the packaged version is too old) and reboot to
