@@ -76,7 +76,8 @@ def config_stack_vm(server):
     # remote(server, command='nohup /root/bootstrap.sh 2>&1')
 
     # Attempt to execute script remotely, hang up, and have it continue to run
-    remote(server, command='nohup /root/bootstrap.sh > /tmp/bootstrap-log.txt 2>&1 &')
+    #remote(server, command='nohup /root/bootstrap.sh > /tmp/bootstrap-log.txt 2>&1 &')
+    remote(server, command='/root/bootstrap.sh > /tmp/bootstrap-log.txt 2>&1 &; disown -h; exit')
 
     wait.until_path_exists(server, path='/tmp/openstack-infra-finished', keyfile=private_key)
     print_remote_file(server, '/tmp/bootstrap-log.txt')
