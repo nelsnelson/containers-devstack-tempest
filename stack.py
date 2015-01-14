@@ -117,8 +117,7 @@ def vm_devstack(server):
 
     # Executes script remotely, but does not hang-up
     #remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh &')
-
-    remote(server, user='jenkins', command='$HOME/scripts/jenkins-devstack.sh 2>&1 &; disown -h; exit')
+    remote(server, user='jenkins', command='screen -d -m $HOME/scripts/jenkins-devstack.sh')
 
     wait.until_path_exists(server, path='/tmp/gate-finished', user='jenkins', keyfile=private_key)
     print_remote_file(server, '/home/jenkins/devstack-gate-log.txt')
