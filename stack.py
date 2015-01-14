@@ -115,21 +115,25 @@ def config_devstack_zuul_target(server):
     remote(server, user='jenkins', command=command)
 
 def vm_devstack(server):
-    remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh 2>&1')
-    # remote(server, user='jenkins', command='$HOME/scripts/jenkins-devstack.sh &')
-    # remote(server, user='jenkins', command="screen -S jenkins-devstack -X '$HOME/scripts/jenkins-devstack.sh' 'cmd^M'")
+    #remote(server, user='jenkins', command='$HOME/scripts/jenkins-devstack.sh &')
+
+    remote(server, user='jenkins', command='nohup $HOME/scripts/jenkins-devstack.sh &')
+
+    #remote(server, user='jenkins', command="screen -S jenkins-devstack -X '$HOME/scripts/jenkins-devstack.sh' 'cmd^M'")
+
     wait.until_path_exists(server, path='/tmp/gate-finished', user='jenkins', keyfile=private_key)
-    print_devstack_log(server)
+    print_remote_file(server, '/home/jenkins/devstack-gate-log.txt')
+
     return_code = int(remote(server, user='jenkins', command='cat /tmp/gate-finished'))
     log.info("Exiting with return code {}".format(return_code))
     print 'Finished running devstack tempest tests on {}'.format(server.accessIPv4)
     sys.exit(return_code)
 
-def print_devstack_log(server):
-    if not server:
+def print_remote_file(server, path=None):
+    if not server or not path:
         return
     target = server.accessIPv4
-    result = ssh.fetch(target, '/home/jenkins/devstack-gate-log.txt', user='jenkins', keyfile=private_key)
+    result = ssh.fetch(target, path, user='jenkins', keyfile=private_key)
     if result:
         print result
 
