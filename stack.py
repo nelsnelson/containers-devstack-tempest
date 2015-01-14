@@ -71,16 +71,13 @@ def stack_vm():
 def config_stack_vm(server):
     remote(server, command='cp /root/.ssh/authorized_keys /root/.ssh/id_rsa.pub')
     remote(server, command='chmod +x /root/bootstrap.sh')
+    remote(server, command='/root/bootstrap.sh 2>&1')
 
-    # Executes script remotely, but does not hang-up
-    # remote(server, command='nohup /root/bootstrap.sh 2>&1')
-
-    # Attempt to execute script remotely, hang up, and have it continue to run
-    #remote(server, command='nohup /root/bootstrap.sh > /tmp/bootstrap-log.txt 2>&1 &')
-    remote(server, command='screen -d -m /root/bootstrap.sh > /tmp/bootstrap-log.txt 2>&1')
+    remote(server, command='git clone https://github.com/nelsnelson/containers-devstack-tempest.git /tmp/a')
+    remote(server, command='/tmp/a/scripts/jenkins-user.sh')
+    remote(server, command='/tmp/a/scripts/openstack-infra-install.sh')
 
     wait.until_path_exists(server, path='/tmp/openstack-infra-finished', keyfile=private_key)
-    print_remote_file(server, '/tmp/bootstrap-log.txt')
 
     if config.libvirt_type == 'lxc':
         remote(server, command='nohup /tmp/a/scripts/nbd-install.sh 2>&1')
